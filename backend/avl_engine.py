@@ -1,8 +1,8 @@
 """
 avl_engine.py — AVL (Approved Vendor List) Awareness Engine
-SupplyLine | Jed's AI/LLM workstream
+Catena | Jed's AI/LLM workstream
 
-This is SupplyLine's core differentiator vs. Octopart and SiliconExpert.
+This is Catena's core differentiator vs. Octopart and SiliconExpert.
 Neither knows your AVL. We do.
 
 The AVL is the list of pre-qualified vendors an OEM can actually buy from.

@@ -1,6 +1,6 @@
 """
 substitution.py — Photonics-Aware Component Substitution Engine
-SupplyLine | Jed's AI/LLM workstream
+Catena | Jed's AI/LLM workstream
 
 Suggests qualified substitute components for at-risk BOM parts.
 Photonics-specific: knows the full vendor landscape, MSA compatibility rules,

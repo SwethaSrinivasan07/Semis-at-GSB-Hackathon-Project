@@ -1,4 +1,4 @@
-# ⚡ SupplyLine — Design-Time Supply Chain Intelligence
+# ⚡ Catena — Design-Time Supply Chain Intelligence
 
 Upload a BOM. Instantly see where you're exposed — before tape-out, not at procurement time.
 

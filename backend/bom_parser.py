@@ -1,6 +1,6 @@
 """
 bom_parser.py — Photonics-Aware BOM Parser
-SupplyLine | Jed's AI/LLM workstream
+Catena | Jed's AI/LLM workstream
 
 Parses raw BOM text or structured rows into normalized part records.
 Photonics-specific: recognizes transceivers, PICs, coherent DSPs, merchant ASICs.

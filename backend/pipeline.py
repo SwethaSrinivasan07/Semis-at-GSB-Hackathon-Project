@@ -1,6 +1,6 @@
 """
 pipeline.py — Full Analysis Pipeline
-SupplyLine | Jed's AI/LLM workstream
+Catena | Jed's AI/LLM workstream
 
 Single entry point for the frontend. Runs the complete analysis chain:
   1. Parse BOM  →  bom_parser
@@ -28,7 +28,7 @@ def run_full_analysis(
     run_substitution: bool = True,
 ) -> dict:
     """
-    Run the complete SupplyLine analysis pipeline on a BOM.
+    Run the complete Catena analysis pipeline on a BOM.
 
     Args:
         bom_input:        Either a raw BOM string (CSV text) or list of row dicts.

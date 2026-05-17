@@ -1,1 +1,1 @@
-"""SupplyLine backend package."""
+"""Catena backend package."""

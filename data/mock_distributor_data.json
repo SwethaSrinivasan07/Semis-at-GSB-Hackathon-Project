@@ -1,6 +1,6 @@
 {
   "_schema_version": "1.0",
-  "_description": "Mock distributor + manufacturer data for SupplyLine MVP. Photonics-heavy to reflect Nokia/Ciena/Arista BOM reality, plus generic semiconductor parts for breadth. Each record matches the contract returned by distributor_api.search_part().",
+  "_description": "Mock distributor + manufacturer data for Catena MVP. Photonics-heavy to reflect Nokia/Ciena/Arista BOM reality, plus generic semiconductor parts for breadth. Each record matches the contract returned by distributor_api.search_part().",
   "_last_updated": "2026-05-17",
   "parts": [
     {

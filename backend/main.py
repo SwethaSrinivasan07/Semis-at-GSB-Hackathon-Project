@@ -1,5 +1,5 @@
 """
-FastAPI app for SupplyLine backend.
+FastAPI app for Catena backend.
 
 Wraps the same backend modules the Streamlit demo uses, so a future
 React/Next.js frontend can call the API without touching the Python.
@@ -28,7 +28,7 @@ from . import demo_mode, distributor_api
 
 log = logging.getLogger(__name__)
 
-app = FastAPI(title="SupplyLine API", version="0.1.0")
+app = FastAPI(title="Catena API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,

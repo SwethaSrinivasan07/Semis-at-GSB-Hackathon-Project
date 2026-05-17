@@ -1,6 +1,6 @@
 """
 risk_narrative.py — VP-Level Supply Chain Risk Narrative Generator
-SupplyLine | Jed's AI/LLM workstream
+Catena | Jed's AI/LLM workstream
 
 Generates a 3-5 sentence plain English risk briefing from a scored BOM.
 Output is what a VP of Supply Chain or Hardware Engineering would want to

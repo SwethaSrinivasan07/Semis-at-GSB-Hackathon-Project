@@ -1,6 +1,6 @@
 """
 risk_engine.py — Photonics-Specific Supply Chain Risk Scorer
-SupplyLine | Jed's AI/LLM workstream
+Catena | Jed's AI/LLM workstream
 
 Scores BOM components across 6 risk dimensions:
   Availability · Lead Time · Cost · Lifecycle · Geopolitical · Concentration

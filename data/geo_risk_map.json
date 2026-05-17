@@ -1,6 +1,6 @@
 {
   "_schema_version": "1.0",
-  "_description": "Geo risk map for SupplyLine. Each country gets a 1-10 risk score (10 = highest supply chain risk for photonics OEM programs) plus a photonics-specific concentration_note explaining why that risk exists in this industry.",
+  "_description": "Geo risk map for Catena. Each country gets a 1-10 risk score (10 = highest supply chain risk for photonics OEM programs) plus a photonics-specific concentration_note explaining why that risk exists in this industry.",
   "_last_updated": "2026-05-17",
   "_scoring_guide": {
     "1-3": "Low risk. Politically stable, multi-supplier ecosystem, low concentration.",

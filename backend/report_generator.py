@@ -82,7 +82,7 @@ def _write_risk_summary_tab(wb: Workbook, analysis: dict[str, Any]) -> None:
     ws = wb.create_sheet("Risk Summary", 0)
     s = analysis["summary"]
 
-    ws["A1"] = "SupplyLine — Risk Summary"
+    ws["A1"] = "Catena — Risk Summary"
     ws["A1"].font = Font(bold=True, size=18)
     ws.merge_cells("A1:E1")
 
@@ -227,7 +227,7 @@ def _write_substitutes_tab(wb: Workbook, analysis: dict[str, Any]) -> None:
 # ====================================================================
 
 class _FooterCanvas(canvas.Canvas):
-    """Adds 'Page N of M  |  generated <date>  |  SupplyLine' to every page."""
+    """Adds 'Page N of M  |  generated <date>  |  Catena' to every page."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -249,7 +249,7 @@ class _FooterCanvas(canvas.Canvas):
     def _draw_footer(self, total: int, stamp: str) -> None:
         self.setFont("Helvetica", 8)
         self.setFillColor(colors.HexColor("#666666"))
-        self.drawString(0.5 * inch, 0.4 * inch, f"SupplyLine  |  Generated {stamp}")
+        self.drawString(0.5 * inch, 0.4 * inch, f"Catena  |  Generated {stamp}")
         self.drawRightString(
             LETTER[0] - 0.5 * inch, 0.4 * inch,
             f"Page {self._pageNumber} of {total}",
@@ -265,7 +265,7 @@ def write_pdf(analysis: dict[str, Any], path: str | Path) -> Path:
         rightMargin=0.5 * inch,
         topMargin=0.5 * inch,
         bottomMargin=0.7 * inch,
-        title="SupplyLine BOM Risk Report",
+        title="Catena BOM Risk Report",
     )
     frame = Frame(
         doc.leftMargin, doc.bottomMargin,
@@ -283,7 +283,7 @@ def write_pdf(analysis: dict[str, Any], path: str | Path) -> Path:
     story: list[Any] = []
 
     # ----- Header -----
-    story.append(Paragraph("SupplyLine — BOM Risk Report", h1))
+    story.append(Paragraph("Catena — BOM Risk Report", h1))
     story.append(Paragraph(
         f"<b>BOM:</b> {analysis.get('bom_name', '(unnamed)')} &nbsp;&nbsp; "
         f"<b>Generated:</b> {analysis.get('generated_at', '')}",

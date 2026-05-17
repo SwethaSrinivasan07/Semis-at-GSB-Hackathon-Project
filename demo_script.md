@@ -1,4 +1,4 @@
-# SupplyLine — 3-Minute Demo Script
+# Catena — 3-Minute Demo Script
 Semis @ GSB Hackathon | Stanford GSB | May 2026
 
 ---
@@ -10,7 +10,7 @@ components, choosing foundries, locking in vendors. Those decisions will govern
 their supply chain for the next 5 to 7 years. And they're making them with zero 
 supply chain visibility. By the time procurement tries to source these parts, 
 they'll discover 52-week lead times, single-source dependencies on InP fabs 
-that three companies in the world can make. SupplyLine fixes that. At design 
+that three companies in the world can make. Catena fixes that. At design 
 time, not procurement time."
 
 ---
@@ -51,7 +51,7 @@ Point to the data fields:
 
 Action: Scroll to Substitution Options.
 
-Say: "SupplyLine doesn't just tell you there's a problem — it tells you what 
+Say: "Catena doesn't just tell you there's a problem — it tells you what 
 to do. Here are three alternatives: EFFECT Photonics as a drop-in InP PIC, 
 Lumentum's coherent receiver as a minor rework, and a silicon photonics 
 migration path if the team wants to redesign for long-term resilience. It 
@@ -84,7 +84,7 @@ in minutes."
 distribution market. About 5 points of that is pure information rent — 
 the fee for knowing what's in stock and what's available. AI destroys that 
 information asymmetry. Arrow's revenue fell 20% in 2024 — the disruption 
-has already started. SupplyLine captures 2 points on transactions that 
+has already started. Catena captures 2 points on transactions that 
 currently cost OEMs 11. Nokia wins. Coherent wins. We win. And Avnet's 
 margins compress — the same way department store margins compressed when 
 Zara owned the intelligence loop."
@@ -102,7 +102,7 @@ Q: Why photonics specifically?
 A: "Photonics is the highest-risk segment in semiconductor supply chains. 
 InP fab concentration is extreme — three fabs globally. Coherent transceivers 
 are being preferentially allocated to hyperscalers. The lead times are the 
-longest in the industry. If SupplyLine works here, it works everywhere."
+longest in the industry. If Catena works here, it works everywhere."
 
 Q: What's the business model?
 A: "Phase 1: $50–200K/year SaaS per OEM for the design co-pilot. 
