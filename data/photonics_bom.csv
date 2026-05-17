@@ -1,0 +1,16 @@
+Item,MPN,Manufacturer,Qty,Reference Designators,Description,Category
+1,CFP2-DCO-400G,Coherent,4,U1-U4,400G Coherent DCO CFP2 Transceiver ZR/ZR+ DWDM,Transceiver
+2,QSFP-DD-400G-ZR,Coherent,8,U5-U12,400G QSFP-DD ZR Coherent Transceiver 80km DWDM,Transceiver
+3,QSFP-DD-400G-DR4,InnoLight,24,U13-U36,400G QSFP-DD DR4 PAM4 Transceiver 500m SMF,Transceiver
+4,QSFP28-100G-LR4,Accelink,16,U37-U52,100G QSFP28 LR4 Transceiver 10km SMF LC Duplex,Transceiver
+5,OP-27635,Coherent,2,U53-U54,InP Photonic Integrated Circuit 400G Coherent Modulator,Photonic IC
+6,LMX-PIC-100,Lumentum,2,U55-U56,InP PIC Coherent Receiver 100G Balanced Photodetector Array,Photonic IC
+7,BCM88690,Broadcom,2,U57-U58,Jericho2c+ 12.8Tbps Ethernet Switch ASIC 7nm,ASIC
+8,ACO-DSP-400,Acacia,4,U59-U62,400G Coherent DSP ASIC Silicon Photonics Platform,ASIC
+9,MV-ALASKA-X,Marvell,6,U63-U68,Alaska-X 400G Ethernet PHY Retimer 5nm TSMC,ASIC
+10,LTC3892EUH,Analog Devices,20,U69-U88,60V 2-Phase Step-Down DC/DC Controller High Efficiency,Power
+11,Si5345A-B-GMR,Silicon Labs,4,U89-U92,10-Output Any-Frequency Any-Output Jitter Attenuating Clock,Timing
+12,FDMB5631,Coherent,1,U93,InP Traveling Wave Electro-Absorption Modulator 40GHz BW,Photonic IC
+13,QSFP-DD-400G-DR4,Lumentum,8,U94-U101,400G QSFP-DD DR4 PAM4 Transceiver 500m SMF,Transceiver
+14,OIF-400ZR-01,Multiple,12,U102-U113,400ZR CFP2 Interoperable Coherent Transceiver OIF Standard,Transceiver
+15,SN74AVC4T245,Texas Instruments,32,U114-U145,4-Bit Dual-Supply Bus Transceiver 3-State Outputs,Logic

@@ -1,0 +1,14 @@
+{
+  "China": {"risk_level": "HIGH", "reason": "Export controls, geopolitical tension, trade war exposure"},
+  "Taiwan": {"risk_level": "HIGH", "reason": "TSMC concentration risk, geopolitical tension with China"},
+  "South Korea": {"risk_level": "MEDIUM", "reason": "Samsung/SK Hynix concentration, North Korea proximity"},
+  "Japan": {"risk_level": "LOW", "reason": "Stable democracy, allied nation, diversified fabs"},
+  "USA": {"risk_level": "LOW", "reason": "Domestic production, CHIPS Act investment"},
+  "Germany": {"risk_level": "LOW", "reason": "EU member, Infineon/Bosch manufacturing"},
+  "France": {"risk_level": "LOW", "reason": "EU member, STMicroelectronics HQ and fabs"},
+  "Ireland": {"risk_level": "LOW", "reason": "EU member, Intel fab operations"},
+  "Netherlands": {"risk_level": "LOW", "reason": "ASML monopoly on EUV, stable EU member"},
+  "Malaysia": {"risk_level": "MEDIUM", "reason": "Semiconductor assembly/packaging hub, political risk"},
+  "Israel": {"risk_level": "MEDIUM", "reason": "Intel/Tower Semiconductor presence, regional conflict risk"},
+  "Unknown": {"risk_level": "MEDIUM", "reason": "Origin not identified"}
+}

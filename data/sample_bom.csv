@@ -1,0 +1,11 @@
+Item,MPN,Manufacturer,Qty,Reference Designators,Description
+1,STM32F103C8T6,STMicroelectronics,10,U1-U10,32-bit ARM Cortex-M3 MCU
+2,LM358DR,Texas Instruments,25,U11-U35,Dual Operational Amplifier
+3,GD25Q64CSIG,GigaDevice,5,U36-U40,64Mbit SPI Flash Memory
+4,TPS62840DLCR,Texas Instruments,50,U41-U90,Step-Down Converter 0.6V-3.3V
+5,XC7A35T-1CPG236C,Xilinx,3,U91-U93,Artix-7 FPGA 35T
+6,IS42S16400J-7TL,ISSI,8,U94-U101,64Mb SDRAM 166MHz
+7,ATMEGA328P-AU,Microchip,15,U102-U116,8-bit AVR Microcontroller 32KB Flash
+8,ADS1115IDGSR,Texas Instruments,20,U117-U136,16-Bit 860SPS ADC with I2C
+9,MAX31855KASA+,Maxim Integrated,12,U137-U148,Thermocouple-to-Digital Converter
+10,ADUM1201ARZ,Analog Devices,8,U149-U156,2-Channel Digital Isolator 25Mbps
