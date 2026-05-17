@@ -31,7 +31,7 @@ st.set_page_config(
 def inject_css():
     st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
 
 :root {
     --bg:            #F4F7FF;
@@ -53,7 +53,7 @@ def inject_css():
 }
 
 html, body, [class*="css"] {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
 /* ── App shell ── */
@@ -79,7 +79,7 @@ section[data-testid="stSidebar"] > div {
 
 /* ── Typography ── */
 h1, h2, h3 {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-family: 'Playfair Display', Georgia, serif !important;
     font-weight: 700 !important;
     letter-spacing: -0.01em !important;
     color: var(--text-primary) !important;
@@ -100,7 +100,7 @@ label, .stTextInput label, .stNumberInput label, .stSelectbox label {
     margin-bottom: 24px;
 }
 .sidebar-logo-title {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-size: 1.2rem;
     font-weight: 700;
     color: var(--text-primary);
@@ -155,7 +155,7 @@ label, .stTextInput label, .stNumberInput label, .stSelectbox label {
     margin-bottom: 10px;
 }
 .metric-value {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-size: 2.4rem;
     font-weight: 700;
     color: var(--text-primary);
@@ -217,18 +217,6 @@ label, .stTextInput label, .stNumberInput label, .stSelectbox label {
     text-transform: uppercase;
     color: var(--text-muted);
     font-weight: 600;
-}
-
-/* ── Component image (top of expanded part card) ── */
-.part-image {
-    display: block;
-    width: 100%;
-    max-height: 180px;
-    object-fit: cover;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    box-shadow: 0 4px 14px rgba(15,23,42,0.05);
-    margin: 4px 0 18px;
 }
 
 /* ── Detail section inside expander ── */
@@ -374,7 +362,7 @@ label, .stTextInput label, .stNumberInput label, .stSelectbox label {
     border: 1px solid var(--border-strong) !important;
     color: var(--text-secondary) !important;
     border-radius: var(--radius-sm) !important;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
     font-size: 0.85rem !important;
     font-weight: 600 !important;
     box-shadow: var(--shadow-sm) !important;
@@ -429,7 +417,7 @@ label, .stTextInput label, .stNumberInput label, .stSelectbox label {
     border: 1px solid var(--border-strong) !important;
     color: var(--text-primary) !important;
     border-radius: var(--radius-sm) !important;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 [data-testid="stNumberInput"] input:focus,
 [data-testid="stTextInput"]   input:focus {
@@ -490,7 +478,7 @@ hr { border-color: var(--border) !important; margin: 24px 0 !important; }
     border: 1px solid rgba(37,99,235,0.08);
 }
 .app-hero h1 {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-family: 'Playfair Display', Georgia, serif !important;
     font-size: 2.2rem !important;
     font-weight: 700 !important;
     color: var(--text-primary) !important;
@@ -532,15 +520,12 @@ hr { border-color: var(--border) !important; margin: 24px 0 !important; }
     box-shadow: 0 1px 8px rgba(15,23,42,0.06);
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 28px;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
 }
-.sl-nav a, .sl-nav a:hover, .sl-nav a:focus, .sl-nav a:visited,
-.sl-nav span, .sl-nav div { text-decoration: none !important; }
 .sl-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; flex-shrink: 0; }
 .sl-logo-box {
-    width: 28px; height: 28px; background: transparent; border-radius: 7px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; line-height: 1; color: #2563EB;
+    width: 28px; height: 28px; background: #2563EB; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center; font-size: 13px; line-height: 1;
 }
 .sl-logo-text { font-size: 1rem; font-weight: 700; letter-spacing: -0.02em; color: #0F172A; }
 .sl-menu { display: flex; align-items: center; gap: 1px; list-style: none; margin: 0; padding: 0; }
@@ -550,7 +535,7 @@ hr { border-color: var(--border) !important; margin: 24px 0 !important; }
     font-size: 0.85rem; font-weight: 500; color: #64748B;
     text-decoration: none; cursor: pointer; white-space: nowrap;
     transition: background 0.14s, color 0.14s;
-    background: none; border: none; font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif;
 }
 .sl-link:hover, .sl-item:hover > .sl-link { background: #F1F5F9; color: #0F172A; }
 .sl-chevron { width: 12px; height: 12px; opacity: 0.45; transition: transform 0.2s, opacity 0.2s; }
@@ -579,17 +564,18 @@ hr { border-color: var(--border) !important; margin: 24px 0 !important; }
 .sl-btn-out {
     padding: 7px 14px; border-radius: 8px; border: 1px solid rgba(37,99,235,0.22);
     background: transparent; color: #475569; font-size: 0.83rem; font-weight: 500;
-    cursor: pointer; font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
     transition: all 0.14s; text-decoration: none; white-space: nowrap;
 }
 .sl-btn-out:hover { border-color: #2563EB; color: #2563EB; background: #EFF6FF; }
 .sl-btn-pri {
-    padding: 7px 14px; border-radius: 8px; border: 1px solid rgba(37,99,235,0.22);
-    background: transparent; color: #475569; font-size: 0.83rem; font-weight: 500;
-    cursor: pointer; font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    transition: all 0.14s; text-decoration: none; white-space: nowrap;
+    padding: 7px 14px; border-radius: 8px; border: none;
+    background: #2563EB; color: #fff; font-size: 0.83rem; font-weight: 600;
+    cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: background 0.14s; text-decoration: none; white-space: nowrap;
+    box-shadow: 0 1px 4px rgba(37,99,235,0.30);
 }
-.sl-btn-pri:hover { border-color: #2563EB; color: #2563EB; background: #EFF6FF; }
+.sl-btn-pri:hover { background: #1D4ED8; }
 @media (max-width: 820px) { .sl-menu, .sl-auth { display: none; } }
 </style>
 """, unsafe_allow_html=True)
@@ -974,47 +960,6 @@ SAMPLE_RESULTS = [
 RISK_ICONS = {"RED": "🔴", "YELLOW": "🟡", "GREEN": "🟢"}
 
 
-# ─── Component imagery ──────────────────────────────────────────────────────
-# Picks a thematically-appropriate stock photo for each part based on simple
-# keyword matching against MPN + description. Images are visual context only
-# (per the brief: "does not need to match 100%"), served from Unsplash CDN
-# with auto-format & crop so they're light and consistent.
-_COMPONENT_IMAGES = {
-    # Photonic / fiber / coherent optics / transceivers — fiber strand bundle
-    "photonic":   "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=640&q=70",
-    # DSP / ASIC / SoC / FPGA / processor — IC die / chip macro
-    "asic":       "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=640&q=70",
-    # Crystal oscillator / VCXO / clocking — densely populated SMD board
-    "oscillator": "https://images.unsplash.com/photo-1597852074816-d933c7d2b988?auto=format&fit=crop&w=640&q=70",
-    # Ethernet PHY / networking — patch panel with cables
-    "phy":        "https://images.unsplash.com/photo-1551808525-51a94da548ce?auto=format&fit=crop&w=640&q=70",
-    # Default — Adi Goldstein "green PCB with gold traces" (one of the most
-    # widely-referenced electronics stock photos on Unsplash).
-    "default":    "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=640&q=70",
-}
-
-
-def image_for_part(part: dict) -> str:
-    """Return an Unsplash URL keyed to the part's apparent category."""
-    desc = ((part.get("description") or "") + " " + (part.get("mpn") or "")).lower()
-    if any(k in desc for k in (
-        "pic", "photonic", "modulator", "qsfp", "sfp", "optic",
-        "coherent", "laser", "transceiver",
-    )):
-        return _COMPONENT_IMAGES["photonic"]
-    if any(k in desc for k in (
-        "dsp", "asic", "soc", "fpga", "processor", "cdr", "switch",
-    )):
-        return _COMPONENT_IMAGES["asic"]
-    if any(k in desc for k in (
-        "oscillator", "vcxo", "crystal", "xtal", "clock", "tcxo",
-    )):
-        return _COMPONENT_IMAGES["oscillator"]
-    if any(k in desc for k in ("phy", "ethernet", "gbe", "base-t")):
-        return _COMPONENT_IMAGES["phy"]
-    return _COMPONENT_IMAGES["default"]
-
-
 def pill(risk: str, label=None) -> str:
     text = label or risk
     return f'<span class="pill pill-{risk}">{text}</span>'
@@ -1134,13 +1079,6 @@ def render_part_rows(results: list) -> None:
         )
 
         with st.expander(label):
-            # Component image — visual reference for the part type.
-            img_url = image_for_part(part)
-            st.markdown(
-                f'<img class="part-image" src="{img_url}" alt="{mpn}" loading="lazy" />',
-                unsafe_allow_html=True,
-            )
-
             # Risk breakdown
             st.markdown('<div class="detail-section-header">Risk Breakdown</div>', unsafe_allow_html=True)
             render_risk_strip(flags)
@@ -1266,125 +1204,14 @@ def build_text_report(results: list) -> bytes:
     return "\n".join(lines).encode()
 
 
-# ─── Hero (scroll-driven word reveal — vanilla port of TextRevealByWord) ────
-def render_hero() -> None:
-    """
-    Word-by-word reveal hero. Words dim → bright as the user scrolls;
-    if they don't scroll within ~1s the reveal auto-staggers so the message
-    is never stranded as muted gray text. Rendered in components.html so the
-    JS can read window.parent.scrollY (same-origin) for true scroll-driven
-    opacity, matching the Framer Motion useScroll/useTransform behavior.
-    """
-    html = """<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"/>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-  *,*::before,*::after { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: transparent;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif; color: #0F172A; }
-
-  .hero-wrap {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 30px 16px 14px; text-align: center;
-  }
-  .hero-title {
-    display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
-    max-width: 880px; gap: 0.18em 0.42em; margin: 0 0 14px;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-size: clamp(1.55rem, 3.4vw, 2.5rem);
-    font-weight: 800; letter-spacing: -0.025em; line-height: 1.15;
-  }
-  .hero-word {
-    position: relative; display: inline-block;
-    color: rgba(15,23,42,0.18);
-    transition: color 0.22s ease-out;
-    will-change: color;
-  }
-  .hero-word.lit { color: #0F172A; }
-  .hero-word.accent.lit { color: #2563EB; }
-  .hero-sub {
-    font-size: 0.92rem; font-weight: 500; color: #64748B;
-    max-width: 560px; margin: 0; line-height: 1.55; letter-spacing: -0.005em;
-    opacity: 0; transform: translateY(6px);
-    transition: opacity 0.6s ease-out 0.05s, transform 0.6s ease-out 0.05s;
-  }
-  .hero-sub.lit { opacity: 1; transform: translateY(0); }
-</style>
-</head>
-<body>
-  <div class="hero-wrap">
-    <div class="hero-title" id="hero-title"></div>
-    <p class="hero-sub" id="hero-sub">Design-Time Supply Chain Intelligence for Photonics OEMs</p>
-  </div>
-<script>
-(function(){
-  // "Catena" is index 0 — render it in brand blue when lit.
-  var words   = ["Catena", "—", "Supply", "Chain", "Simplified."];
-  var accents = { 0: true };
-  var title   = document.getElementById("hero-title");
-  var sub     = document.getElementById("hero-sub");
-
-  words.forEach(function(w, i) {
-    var s = document.createElement("span");
-    s.className = "hero-word" + (accents[i] ? " accent" : "");
-    s.textContent = w;
-    title.appendChild(s);
-  });
-  var wordEls = title.querySelectorAll(".hero-word");
-
-  // Scroll-driven opacity. Read parent scrollY (same-origin Streamlit page);
-  // fall back to own window scrollY if cross-frame access is blocked.
-  var SCROLL_END = 360; // px of parent scroll to complete the reveal
-  var userScrolled = false;
-
-  function getParentScroll() {
-    try { return window.parent.scrollY || window.parent.pageYOffset || 0; }
-    catch(e) { return window.scrollY || 0; }
-  }
-
-  function tick() {
-    var y = getParentScroll();
-    if (y > 4) userScrolled = true;
-    var p = Math.min(1, Math.max(0, y / SCROLL_END));
-    var lit = Math.round(p * words.length);
-    wordEls.forEach(function(el, i) {
-      el.classList.toggle("lit", i < lit);
-    });
-    sub.classList.toggle("lit", p > 0.82);
-  }
-
-  // Wire parent + self scroll listeners.
-  try { window.parent.addEventListener("scroll", tick, { passive: true }); } catch(e) {}
-  window.addEventListener("scroll", tick, { passive: true });
-
-  // Initial paint.
-  tick();
-
-  // Graceful fallback: if user hasn't scrolled within ~900ms, run the
-  // staggered reveal automatically so the hero isn't stuck in muted state.
-  setTimeout(function() {
-    if (userScrolled) return;
-    wordEls.forEach(function(el, i) {
-      setTimeout(function(){ el.classList.add("lit"); }, i * 95);
-    });
-    setTimeout(function(){ sub.classList.add("lit"); }, words.length * 95 + 60);
-  }, 900);
-})();
-</script>
-</body>
-</html>"""
-    components.html(html, height=210, scrolling=False)
-
-
 # ─── Navbar ──────────────────────────────────────────────────────────────────
 def render_navbar() -> None:
     """Top navigation bar — CSS lives in inject_css(), only clean HTML here."""
     st.markdown(
         '<div class="sl-nav">'
-        '<a class="sl-logo" href="?view=home" target="_self"><div class="sl-logo-box">&#9889;</div><span class="sl-logo-text">Catena</span></a>'
+        '<a class="sl-logo" href="#"><div class="sl-logo-box">&#9889;</div><span class="sl-logo-text">Catena</span></a>'
         '<ul class="sl-menu">'
-        '<li class="sl-item"><a class="sl-link" href="?view=home" target="_self">Dashboard</a></li>'
+        '<li class="sl-item"><a class="sl-link" href="#">Dashboard</a></li>'
         '<li class="sl-item"><span class="sl-link">Features &#9662;</span>'
         '<div class="sl-drop">'
         '<a class="sl-drop-item" href="#"><div><div class="sl-drop-title">Risk Analysis</div><div class="sl-drop-desc">6-dimension AI risk scoring across your full BOM</div></div></a>'
@@ -1417,10 +1244,10 @@ def render_feature_section() -> None:
 <html lang="en">
 <head><meta charset="UTF-8"/>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
   *, *::before, *::after { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #F4F7FF;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif; color: #0F172A; }
+    font-family: 'Plus Jakarta Sans', sans-serif; color: #0F172A; }
 
   .section  { padding: 32px 0 12px; }
   .container { max-width: 100%; padding: 0 4px; }
@@ -1439,7 +1266,7 @@ def render_feature_section() -> None:
     gap: 14px; text-align: center; margin-bottom: 32px;
   }
   .section-header h1 {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em;
     color: #0F172A; max-width: 540px; line-height: 1.25; margin: 0;
   }
@@ -1452,7 +1279,7 @@ def render_feature_section() -> None:
     border-radius: 10px; border: 1px solid transparent;
     background: transparent; color: #64748B;
     font-size: 0.83rem; font-weight: 600; cursor: pointer;
-    transition: all 0.15s; font-family: 'Inter', system-ui, -apple-system, sans-serif; outline: none;
+    transition: all 0.15s; font-family: 'Plus Jakarta Sans', sans-serif; outline: none;
   }
   .tab-btn:hover { background: #F1F5F9; color: #0F172A; border-color: rgba(37,99,235,0.10); }
   .tab-btn.active { background: #EFF6FF; color: #2563EB; border-color: rgba(37,99,235,0.20); }
@@ -1478,14 +1305,14 @@ def render_feature_section() -> None:
     font-size: 0.68rem; font-weight: 700; color: #2563EB;
     background: #EFF6FF; letter-spacing: 0.07em; text-transform: uppercase; width: fit-content;
   }
-  .panel-title { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; color: #0F172A; line-height: 1.2; margin: 0; }
+  .panel-title { font-family: 'Playfair Display', Georgia, serif; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; color: #0F172A; line-height: 1.2; margin: 0; }
   .panel-desc  { color: #64748B; line-height: 1.65; font-size: 0.875rem; margin: 0; }
   .panel-btn {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 10px 22px; background: #2563EB; color: #fff;
     border-radius: 9px; border: none; font-size: 0.875rem; font-weight: 600;
     cursor: pointer; width: fit-content; margin-top: 4px;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif; transition: background 0.14s;
+    font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.14s;
     box-shadow: 0 1px 4px rgba(37,99,235,0.28);
   }
   .panel-btn:hover { background: #1D4ED8; }
@@ -1521,7 +1348,7 @@ def render_feature_section() -> None:
         <div class="panel-text">
           <span class="panel-badge">AI-Powered</span>
           <h3 class="panel-title">Catch 60-week lead times before you're locked in.</h3>
-          <p class="panel-desc">Catena analyzes every line of your BOM across six risk dimensions — availability, lead time, cost, lifecycle, geopolitical exposure, and vendor concentration — in seconds. No surprises at procurement.</p>
+          <p class="panel-desc">Claude analyzes every line of your BOM across six risk dimensions — availability, lead time, cost, lifecycle, geopolitical exposure, and vendor concentration — in seconds. No surprises at procurement.</p>
           <button class="panel-btn">Analyze a BOM &rarr;</button>
         </div>
         <img class="panel-img" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=700&q=80" alt="Risk analytics dashboard" loading="lazy"/>
@@ -1562,228 +1389,6 @@ def render_feature_section() -> None:
     components.html(html, height=660, scrolling=False)
 
 
-# ─── Testimonials carousel (stacked-card port of TestimonialCarousel) ────────
-def render_testimonials() -> None:
-    """Customer testimonial carousel — three stacked cards, auto-rotates every
-    6 seconds, click arrows or dots to navigate. Vanilla-JS port of the
-    Framer Motion shadcn component."""
-    html = """<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"/>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-  *,*::before,*::after { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: transparent;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif; color: #0F172A; }
-
-  .wrap { padding: 40px 16px 24px; }
-
-  .section-head { text-align: center; max-width: 620px; margin: 0 auto 18px; }
-  .badge {
-    display: inline-flex; align-items: center; border-radius: 9999px;
-    border: 1px solid rgba(37,99,235,0.22); padding: 3px 13px;
-    font-size: 0.68rem; font-weight: 700; color: #2563EB;
-    letter-spacing: 0.07em; text-transform: uppercase; background: #EFF6FF;
-    margin-bottom: 14px;
-  }
-  .section-title {
-    font-family: 'Inter', sans-serif;
-    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.025em;
-    color: #0F172A; margin: 6px 0 10px; line-height: 1.2;
-  }
-  .section-sub { color: #64748B; font-size: 0.875rem; margin: 0; line-height: 1.6; }
-
-  .carousel-area {
-    position: relative; width: 400px; height: 300px; margin: 36px auto 0;
-  }
-  .card {
-    position: absolute; inset: 0;
-    background: #FFFFFF; border: 1px solid rgba(37,99,235,0.10);
-    border-radius: 16px;
-    box-shadow: 0 12px 32px rgba(15,23,42,0.10), 0 1px 3px rgba(15,23,42,0.05);
-    padding: 26px 28px 22px;
-    display: flex; flex-direction: column; align-items: center; text-align: center;
-    transition: transform 0.5s cubic-bezier(0.4,0,0.2,1),
-                opacity 0.5s cubic-bezier(0.4,0,0.2,1);
-    transform-origin: 50% 100%;
-    will-change: transform, opacity;
-  }
-  .card-avatar {
-    width: 58px; height: 58px; border-radius: 50%;
-    border: 2px solid #EFF6FF; object-fit: cover; margin-bottom: 12px;
-    box-shadow: 0 1px 4px rgba(15,23,42,0.06);
-  }
-  .card-quote {
-    font-size: 0.875rem; color: #475569; line-height: 1.6; margin: 4px 0 14px;
-    font-weight: 500; max-width: 320px;
-  }
-  .card-name {
-    font-size: 0.84rem; font-weight: 700; color: #0F172A; margin: 0 0 2px;
-  }
-  .card-role {
-    font-size: 0.72rem; color: #64748B; font-weight: 500; line-height: 1.4;
-  }
-  .card-company {
-    margin-top: 10px; font-size: 0.7rem; font-weight: 800; color: #2563EB;
-    letter-spacing: 0.14em; text-transform: uppercase;
-  }
-
-  /* Stacked-card states */
-  .card.is-back2 { transform: translateY(22px) scale(0.92) rotate(-3deg);
-                   opacity: 0.32; z-index: 1; pointer-events: none; }
-  .card.is-back1 { transform: translateY(11px) scale(0.96) rotate(-1.5deg);
-                   opacity: 0.6; z-index: 2; pointer-events: none; }
-  .card.is-current { transform: translateY(0) scale(1) rotate(0);
-                     opacity: 1; z-index: 3; }
-
-  .arrows {
-    display: flex; justify-content: space-between; align-items: center;
-    width: 400px; margin: 24px auto 0; padding: 0 12px;
-  }
-  .arrow-btn {
-    width: 38px; height: 38px; border-radius: 50%;
-    border: 1px solid rgba(37,99,235,0.18); background: #FFFFFF;
-    cursor: pointer; color: #2563EB; font-size: 16px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 1px 3px rgba(15,23,42,0.06);
-    transition: all 0.16s;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  }
-  .arrow-btn:hover { background: #EFF6FF; border-color: #2563EB; transform: translateY(-1px); }
-  .arrow-btn:active { transform: translateY(0); }
-
-  .dots-row {
-    display: flex; justify-content: center; align-items: center; gap: 7px;
-  }
-  .dot {
-    width: 7px; height: 7px; border-radius: 50%; background: #CBD5E1;
-    border: none; cursor: pointer; padding: 0;
-    transition: all 0.24s cubic-bezier(0.4,0,0.2,1);
-  }
-  .dot.active { background: #2563EB; width: 22px; border-radius: 4px; }
-  .dot:hover:not(.active) { background: #94A3B8; }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="section-head">
-    <span class="badge">Customer Stories</span>
-    <h2 class="section-title">Trusted by photonics OEMs</h2>
-    <p class="section-sub">Hardware leaders at Nokia, Cisco, and Ciena ship faster when supply chain risk is solved at design-time, not at procurement.</p>
-  </div>
-
-  <div class="carousel-area" id="carousel"></div>
-
-  <div class="arrows">
-    <button class="arrow-btn" id="prev" aria-label="Previous testimonial">&larr;</button>
-    <div class="dots-row" id="dots"></div>
-    <button class="arrow-btn" id="next" aria-label="Next testimonial">&rarr;</button>
-  </div>
-</div>
-
-<script>
-(function() {
-  var TESTIMONIALS = [
-    {
-      name: "Sarah Chen",
-      role: "VP, Optical Engineering",
-      company: "Nokia",
-      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-      quote: "Catena flagged a single-source InP PIC dependency two weeks before tape-out. Three months of redesign avoided \\u2014 the program shipped on schedule."
-    },
-    {
-      name: "Marcus Reyes",
-      role: "Director, Component Engineering",
-      company: "Cisco",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-      quote: "Pulled supply chain reviews from week 30 of the program to week 4. Hardware engineers now ship with full procurement context from day one."
-    },
-    {
-      name: "Priya Patel",
-      role: "Senior Director, Supply Chain Strategy",
-      company: "Ciena",
-      avatar: "https://randomuser.me/api/portraits/women/68.jpg",
-      quote: "First tool that actually understands our AVL. It feels like having a senior procurement engineer embedded in every design review."
-    }
-  ];
-
-  var n = TESTIMONIALS.length;
-  var idx = 0;
-  var carousel = document.getElementById("carousel");
-  var dotsEl = document.getElementById("dots");
-
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, function(c) {
-      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
-    });
-  }
-
-  function makeCard(t) {
-    var el = document.createElement("div");
-    el.className = "card";
-    el.innerHTML = ''
-      + '<img class="card-avatar" src="' + t.avatar + '" alt="' + escapeHtml(t.name) + '" />'
-      + '<p class="card-quote">“' + escapeHtml(t.quote) + '”</p>'
-      + '<h4 class="card-name">' + escapeHtml(t.name) + '</h4>'
-      + '<div class="card-role">' + escapeHtml(t.role) + '</div>'
-      + '<div class="card-company">' + escapeHtml(t.company) + '</div>';
-    return el;
-  }
-
-  var cards = TESTIMONIALS.map(makeCard);
-  cards.forEach(function(c){ carousel.appendChild(c); });
-
-  var dots = [];
-  TESTIMONIALS.forEach(function(_, i) {
-    var d = document.createElement("button");
-    d.className = "dot";
-    d.setAttribute("aria-label", "Go to testimonial " + (i+1));
-    d.addEventListener("click", function(){ goTo(i); });
-    dotsEl.appendChild(d);
-    dots.push(d);
-  });
-
-  function render() {
-    cards.forEach(function(c, i) {
-      c.classList.remove("is-current", "is-back1", "is-back2");
-      var pos = ((i - idx) + n) % n;
-      if (pos === 0) c.classList.add("is-current");
-      else if (pos === 1) c.classList.add("is-back1");
-      else c.classList.add("is-back2");
-    });
-    dots.forEach(function(d, i) {
-      d.classList.toggle("active", i === idx);
-    });
-  }
-
-  function goTo(i) {
-    idx = ((i % n) + n) % n;
-    render();
-    resetTimer();
-  }
-  function next() { goTo(idx + 1); }
-  function prev() { goTo(idx - 1); }
-
-  document.getElementById("next").addEventListener("click", next);
-  document.getElementById("prev").addEventListener("click", prev);
-
-  // Pause auto-rotation on hover; resume on leave.
-  var carouselArea = document.getElementById("carousel");
-  var timer;
-  function startTimer() { timer = setInterval(next, 6000); }
-  function resetTimer() { clearInterval(timer); startTimer(); }
-  carouselArea.addEventListener("mouseenter", function(){ clearInterval(timer); });
-  carouselArea.addEventListener("mouseleave", startTimer);
-
-  render();
-  startTimer();
-})();
-</script>
-</body>
-</html>"""
-    components.html(html, height=560, scrolling=False)
-
-
 # ─── Sidebar replaced by top navbar — static defaults ────────────────────────
 show_red    = True
 show_yellow = True
@@ -1794,44 +1399,47 @@ show_green  = True
 inject_css()
 render_navbar()
 
-render_hero()
+st.markdown("""
+<div class="app-hero">
+  <h1>⚡ Catena</h1>
+  <p>Design-Time Supply Chain Intelligence for Photonics OEMs</p>
+</div>
+""", unsafe_allow_html=True)
 
 # ── Upload row ────────────────────────────────────────────────────────────────
-col_upload, col_sample = st.columns([5, 1.5])
+col_upload, col_sample, col_analyze = st.columns([4, 1.4, 1.8])
 
 with col_upload:
     uploaded_file = st.file_uploader(
         "Upload BOM",
         type=["csv", "xlsx"],
         label_visibility="collapsed",
-        help="Upload a CSV or Excel BOM file — analysis starts automatically",
+        help="Upload a CSV or Excel BOM file to analyze",
     )
 
 with col_sample:
     sample_clicked = st.button("Try Sample BOM", use_container_width=True)
 
+with col_analyze:
+    analyze_clicked = st.button(
+        "⚡ Analyze with Claude",
+        use_container_width=True,
+        type="primary",
+    )
+
 # ── Session state ─────────────────────────────────────────────────────────────
 if "results" not in st.session_state:
     st.session_state.results = None
-if "last_upload_name" not in st.session_state:
-    st.session_state.last_upload_name = None
-
-# ── Navbar/logo "Home" click → clears results via URL query param ────────────
-# Click on Catena logo or Dashboard link sets ?view=home → we reset state here.
-if st.query_params.get("view") == "home":
-    st.session_state.results = None
-    st.session_state.last_upload_name = None
-    st.query_params.clear()
 
 # ── Trigger logic ─────────────────────────────────────────────────────────────
 if sample_clicked:
     st.session_state.results = SAMPLE_RESULTS
 
-# Auto-run analysis when a new file is uploaded (no extra button click needed).
-if uploaded_file is not None and uploaded_file.name != st.session_state.last_upload_name:
-    st.session_state.last_upload_name = uploaded_file.name
-    if BACKEND_AVAILABLE:
-        with st.spinner("Analyzing BOM…"):
+if analyze_clicked:
+    if uploaded_file is None:
+        st.warning("Upload a BOM file first, or click **Try Sample BOM** to run the demo.")
+    elif BACKEND_AVAILABLE:
+        with st.spinner("Analyzing BOM with Claude…"):
             try:
                 st.session_state.results = analyze_bom(uploaded_file)
             except Exception as exc:
@@ -1856,12 +1464,8 @@ if st.session_state.results:
     # Metric cards
     render_metric_cards(results)
 
-    # Download + home row
-    col_home, col_dl1, col_dl2, _ = st.columns([1.2, 1.6, 1.6, 3.6])
-    with col_home:
-        if st.button("← Home", use_container_width=True, key="home_btn"):
-            st.session_state.results = None
-            st.rerun()
+    # Download row
+    col_dl1, col_dl2, _ = st.columns([1.5, 1.5, 4])
     with col_dl1:
         st.download_button(
             "📊 Annotated BOM (Excel)",
@@ -1899,6 +1503,5 @@ if st.session_state.results:
         )
 
 else:
-    # Landing state — feature showcase + testimonials
+    # Landing state — feature showcase
     render_feature_section()
-    render_testimonials()
