@@ -515,7 +515,77 @@ hr { border-color: var(--border) !important; margin: 24px 0 !important; }
     font-weight: 500 !important;
 }
 
-/* ── Scrollbar ── */
+/* ══════════════════════════════════════════
+   ACTION BUTTONS (port of multi-type-ripple-buttons)
+═══════════════════════════════════════════ */
+.rb-row {
+    display: flex; justify-content: center; align-items: center;
+    gap: 14px; padding: 8px 0 18px; flex-wrap: wrap;
+}
+.rb {
+    position: relative;
+    border: none; background: transparent;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-size: 0.92rem !important; font-weight: 600 !important; letter-spacing: -0.01em;
+    padding: 11px 24px; border-radius: 10px;
+    cursor: pointer; overflow: hidden; isolation: isolate;
+    transition: transform 0.12s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+    text-decoration: none !important;
+    display: inline-flex; align-items: center; gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+    line-height: 1;
+}
+.rb:active { transform: translateY(1px); }
+.rb .rb-label { position: relative; z-index: 2; }
+
+/* Variant: default (primary filled) */
+.rb-default {
+    background: #2563EB !important; color: #FFFFFF !important;
+    box-shadow: 0 1px 3px rgba(37,99,235,0.30), 0 6px 18px rgba(37,99,235,0.20);
+}
+.rb-default:hover { background: #1D4ED8 !important; color: #FFFFFF !important; }
+
+/* Variant: hoverborder (animated outline ring on hover) */
+.rb-hoverborder { color: #0F172A !important; background: #FFFFFF !important; border: 1px solid rgba(37,99,235,0.18); }
+.rb-hoverborder::before {
+    content: ''; position: absolute; inset: -1px;
+    border-radius: inherit; padding: 1.5px;
+    background: conic-gradient(from 0deg, transparent 0deg, #2563EB 90deg, #60A5FA 180deg, #2563EB 270deg, transparent 360deg);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude; -webkit-mask-composite: xor;
+    opacity: 0; transition: opacity 0.25s ease;
+    animation: rb-spin 3s linear infinite;
+    z-index: 1; pointer-events: none;
+}
+.rb-hoverborder:hover { color: #2563EB !important; }
+.rb-hoverborder:hover::before { opacity: 1; }
+@keyframes rb-spin { to { transform: rotate(360deg); } }
+
+/* Variant: hover (background fills from center on hover) */
+.rb-hover { color: #0F172A !important; background: #F1F5F9 !important; border: 1px solid rgba(37,99,235,0.10); }
+.rb-hover::after {
+    content: ''; position: absolute; left: 50%; top: 50%;
+    width: 0; height: 0; border-radius: 50%;
+    background: rgba(105,150,226,0.40);
+    transform: translate(-50%, -50%);
+    transition: width 0.55s ease, height 0.55s ease;
+    z-index: 1; pointer-events: none;
+}
+.rb-hover:hover::after { width: 380px; height: 380px; }
+.rb-hover:hover { color: #1E40AF !important; }
+
+/* Pure-CSS click ripple: radial pulse from center on :active */
+.rb-ripple-layer {
+    position: absolute; inset: 0; border-radius: inherit;
+    pointer-events: none; z-index: 3;
+    background: radial-gradient(circle at center, currentColor 0%, transparent 60%);
+    opacity: 0; transform: scale(0.4);
+    transition: transform 0s, opacity 0.6s ease-out;
+}
+.rb:active .rb-ripple-layer { opacity: 0.22; transform: scale(2); transition: transform 0.55s ease-out, opacity 0s; }
+
+/* Scrollbar */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
@@ -1440,165 +1510,29 @@ def render_action_buttons() -> None:
       - Contact Us     → hover (background-color fill from cursor)
 
     "Try Sample BOM" links to ?action=sample which the Python handler reads
-    to load SAMPLE_RESULTS. The other two are decorative for the demo.
+    to load SAMPLE_RESULTS. Rendered as st.markdown (NOT components.html) so
+    the <a href> links navigate the actual page natively — no iframe, no
+    sandbox restrictions, no stale-DOM duplication on rerun.
     """
-    html = """<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"/>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-  *,*::before,*::after { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: transparent;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-
-  .btn-row {
-    display: flex; justify-content: center; align-items: center;
-    gap: 14px; padding: 12px 16px 16px; flex-wrap: wrap;
-  }
-
-  /* Shared button skeleton */
-  .rb {
-    position: relative;
-    border: none; background: transparent;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-size: 0.92rem; font-weight: 600; letter-spacing: -0.01em;
-    padding: 11px 24px; border-radius: 10px;
-    cursor: pointer; overflow: hidden; isolation: isolate;
-    transition: transform 0.12s ease, box-shadow 0.18s ease;
-    text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .rb:active { transform: translateY(1px); }
-  .rb .rb-label { position: relative; z-index: 2; pointer-events: none; }
-
-  /* Variant: default (primary filled) */
-  .rb-default {
-    background: #2563EB; color: #FFFFFF;
-    box-shadow: 0 1px 3px rgba(37,99,235,0.30), 0 6px 18px rgba(37,99,235,0.20);
-  }
-  .rb-default:hover { background: #1D4ED8; }
-
-  /* Variant: hoverborder (animated outline ring on hover) */
-  .rb-hoverborder {
-    color: #0F172A; background: #FFFFFF;
-    border: 1px solid rgba(37,99,235,0.18);
-  }
-  .rb-hoverborder::before {
-    content: ''; position: absolute; inset: -1px;
-    border-radius: inherit; padding: 1.5px;
-    background: conic-gradient(from 0deg, transparent 0deg, #2563EB 90deg,
-                               #60A5FA 180deg, #2563EB 270deg, transparent 360deg);
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude; -webkit-mask-composite: xor;
-    opacity: 0; transition: opacity 0.25s ease;
-    animation: rb-spin 3s linear infinite;
-    z-index: 1; pointer-events: none;
-  }
-  .rb-hoverborder:hover { color: #2563EB; }
-  .rb-hoverborder:hover::before { opacity: 1; }
-  @keyframes rb-spin { to { transform: rotate(360deg); } }
-
-  /* Variant: hover (background fills from cursor on hover) */
-  .rb-hover {
-    color: #0F172A; background: #F1F5F9;
-    border: 1px solid rgba(37,99,235,0.10);
-  }
-  .rb-hover .rb-fill {
-    position: absolute; left: 50%; top: 50%;
-    width: 0; height: 0; border-radius: 50%;
-    background: rgba(105,150,226,0.40);
-    transform: translate(-50%, -50%);
-    transition: width 0.55s ease, height 0.55s ease;
-    z-index: 1; pointer-events: none;
-  }
-  .rb-hover:hover .rb-fill { width: 380px; height: 380px; }
-  .rb-hover:hover { color: #1E40AF; }
-
-  /* Click ripple (all variants) — JS-spawned circles */
-  .rb-ripple {
-    position: absolute; border-radius: 50%;
-    pointer-events: none; z-index: 3;
-    transform: scale(0); opacity: 1;
-    animation: rb-ripple 600ms ease-out forwards;
-  }
-  .rb-default .rb-ripple   { background: rgba(255,255,255,0.45); }
-  .rb-hoverborder .rb-ripple { background: rgba(37,99,235,0.22); }
-  .rb-hover .rb-ripple     { background: rgba(37,99,235,0.20); }
-  @keyframes rb-ripple {
-    to { transform: scale(1); opacity: 0; }
-  }
-</style>
-</head>
-<body>
-<div class="btn-row">
-  <a class="rb rb-hoverborder" id="rb-upload" href="?action=upload" target="_top">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-      <polyline points="17 8 12 3 7 8"/>
-      <line x1="12" y1="3" x2="12" y2="15"/>
-    </svg>
-    <span class="rb-label">Upload BOM</span>
-  </a>
-
-  <a class="rb rb-default" id="rb-sample" href="?action=sample" target="_top">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-    </svg>
-    <span class="rb-label">Try Sample BOM</span>
-  </a>
-
-  <a class="rb rb-hover" id="rb-contact" href="mailto:hello@catena.ai" target="_top">
-    <span class="rb-fill"></span>
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-      <polyline points="22,6 12,13 2,6"/>
-    </svg>
-    <span class="rb-label">Contact Us</span>
-  </a>
-</div>
-
-<script>
-(function() {
-  // Click ripple — spawn a circle at the click point on every .rb click.
-  document.querySelectorAll('.rb').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      // Spawn click ripple (visual feedback — unchanged).
-      var rect = btn.getBoundingClientRect();
-      var size = Math.max(rect.width, rect.height) * 2;
-      var x = e.clientX - rect.left - size / 2;
-      var y = e.clientY - rect.top  - size / 2;
-      var span = document.createElement('span');
-      span.className = 'rb-ripple';
-      span.style.width = size + 'px';
-      span.style.height = size + 'px';
-      span.style.left = x + 'px';
-      span.style.top  = y + 'px';
-      btn.appendChild(span);
-      setTimeout(function(){ span.remove(); }, 620);
-
-      // Navigate the parent page. Streamlit's components.html iframe
-      // sandbox blocks target="_top" on <a>, so we do it manually.
-      // allow-same-origin lets us access window.top.location.
-      var href = btn.getAttribute('href');
-      if (!href || href === '#') return;
-      if (href.indexOf('mailto:') === 0) return;  // mailto: works natively
-      e.preventDefault();
-      try { window.top.location.href = href; }
-      catch (err) {
-        try { window.parent.location.href = href; }
-        catch (err2) { window.location.href = href; }
-      }
-    });
-  });
-})();
-</script>
-</body>
-</html>"""
-    components.html(html, height=110, scrolling=False)
+    # Single concatenated string — Streamlit's CommonMark parser ends an
+    # HTML block at the first blank line, so keep everything on one line.
+    st.markdown(
+        '<div class="rb-row">'
+        '<a class="rb rb-hoverborder" href="?action=upload" target="_self">'
+        '<span class="rb-ripple-layer"></span>'
+        '<span class="rb-label">&#x1F4E4; Upload BOM</span>'
+        '</a>'
+        '<a class="rb rb-default" href="?action=sample" target="_self">'
+        '<span class="rb-ripple-layer"></span>'
+        '<span class="rb-label">&#9889; Try Sample BOM</span>'
+        '</a>'
+        '<a class="rb rb-hover" href="mailto:hello@catena.ai">'
+        '<span class="rb-ripple-layer"></span>'
+        '<span class="rb-label">&#9993; Contact Us</span>'
+        '</a>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
 
 
 # ─── Navbar ──────────────────────────────────────────────────────────────────
@@ -2310,6 +2244,10 @@ if view == "home":
 
 if action == "sample":
     st.session_state.results = SAMPLE_RESULTS
+    st.query_params.clear()
+elif action == "upload":
+    # Upload BOM is decorative for the demo — just clear the URL so the
+    # user lands cleanly on the landing page.
     st.query_params.clear()
 
 # ── Results ──────────────────────────────────────────────────────────────────
