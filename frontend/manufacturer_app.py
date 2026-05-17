@@ -1514,7 +1514,7 @@ def render_action_buttons() -> None:
 </head>
 <body>
 <div class="btn-row">
-  <a class="rb rb-hoverborder" id="rb-upload" href="?action=upload" target="_self">
+  <a class="rb rb-hoverborder" id="rb-upload" href="?action=upload" target="_top">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
          stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -1524,7 +1524,7 @@ def render_action_buttons() -> None:
     <span class="rb-label">Upload BOM</span>
   </a>
 
-  <a class="rb rb-default" id="rb-sample" href="?action=sample" target="_self">
+  <a class="rb rb-default" id="rb-sample" href="?action=sample" target="_top">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
          stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
@@ -1532,7 +1532,7 @@ def render_action_buttons() -> None:
     <span class="rb-label">Try Sample BOM</span>
   </a>
 
-  <a class="rb rb-hover" id="rb-contact" href="mailto:hello@catena.ai" target="_self">
+  <a class="rb rb-hover" id="rb-contact" href="mailto:hello@catena.ai" target="_top">
     <span class="rb-fill"></span>
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
          stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
