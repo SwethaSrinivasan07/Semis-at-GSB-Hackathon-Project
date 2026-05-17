@@ -1171,7 +1171,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ── Upload row ────────────────────────────────────────────────────────────────
-col_upload, col_sample, col_demo, col_analyze = st.columns([4, 1.2, 1.2, 1.6])
+col_upload, col_sample, col_analyze = st.columns([4, 1.4, 1.8])
 
 with col_upload:
     uploaded_file = st.file_uploader(
@@ -1183,9 +1183,6 @@ with col_upload:
 
 with col_sample:
     sample_clicked = st.button("Try Sample BOM", use_container_width=True)
-
-with col_demo:
-    demo_clicked = st.button("Demo Mode", use_container_width=True)
 
 with col_analyze:
     analyze_clicked = st.button(
@@ -1199,7 +1196,7 @@ if "results" not in st.session_state:
     st.session_state.results = None
 
 # ── Trigger logic ─────────────────────────────────────────────────────────────
-if sample_clicked or demo_clicked:
+if sample_clicked:
     st.session_state.results = SAMPLE_RESULTS
 
 if analyze_clicked:
