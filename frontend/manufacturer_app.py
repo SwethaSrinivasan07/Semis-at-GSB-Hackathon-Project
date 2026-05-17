@@ -463,6 +463,7 @@ hr { border-color: #27272a !important; margin: 20px 0 !important; }
 # ─── Sample data ─────────────────────────────────────────────────────────────
 SAMPLE_BOM_CSV = """\
 Part Number,Manufacturer,Quantity,Reference Designators,Description
+OP-27635,Coherent,4,"PIC1,PIC4",InP Photonic Integrated Circuit — coherent modulator
 QSFP-DD-400G-DR4,Coherent,12,"Q1,Q2,Q12",400G QSFP-DD DR4 Transceiver
 INPHI-K200Q2-1,Marvell (Inphi),8,"DSP1,DSP8",400G Coherent DSP ASIC
 GN1103-DQFP,Semtech,24,"CDR1,CDR24",100G PAM4 CDR IC
@@ -474,6 +475,61 @@ VSC8514XKN,Microchip Technology,2,"PHY1,PHY2",Quad-port GbE PHY
 """
 
 SAMPLE_RESULTS = [
+    {
+        "mpn": "OP-27635",
+        "manufacturer": "Coherent Corp.",
+        "quantity": 4,
+        "reference_designators": ["PIC1", "PIC2", "PIC3", "PIC4"],
+        "description": "InP Photonic Integrated Circuit — coherent modulator/demodulator for 400G ZR+ line cards",
+        "distributor_data": {
+            "description": "InP PIC coherent modulator, 400G ZR+ capable, dual-polarization IQ modulator",
+            "manufacturer": "Coherent Corp.",
+            "lifecycle_status": "Active",
+            "unit_price": 8400.00,
+            "stock": 8,
+            "provider": "Direct (Coherent FAE only)",
+            "lead_time_weeks": 60,
+            "fab_location": "USA (Coherent Bloomfield CT InP fab)",
+            "datasheet_url": "",
+            "geo_risk": "HIGH",
+        },
+        "risk": {
+            "composite": "RED",
+            "flags": {
+                "availability": "RED",
+                "lead_time": "RED",
+                "cost": "RED",
+                "lifecycle": "GREEN",
+                "geopolitical": "RED",
+            },
+        },
+        "substitutes": [
+            {
+                "mpn": "EFF-InP-PIC-400G",
+                "manufacturer": "EFFECT Photonics",
+                "compatibility_grade": "drop-in",
+                "key_differences": "Equivalent InP PIC, same modulator architecture, MSA footprint compatible",
+                "why_better": "Alternate InP source — breaks single-supplier lock; 18-week qualification vs 60-week lead",
+                "estimated_availability": "Engineering samples in 8 weeks; production 18 weeks",
+            },
+            {
+                "mpn": "LMX-ICIX-400ZR",
+                "manufacturer": "Lumentum",
+                "compatibility_grade": "minor-rework",
+                "key_differences": "Different bias voltage range; requires DSP firmware tuning for Lumentum PIC",
+                "why_better": "US fab, active production ramp, second source for InP coherent PICs",
+                "estimated_availability": "45 units available, 22-week lead for production volumes",
+            },
+            {
+                "mpn": "SiPh-400G-MOD",
+                "manufacturer": "Intel / Tower Semiconductor",
+                "compatibility_grade": "redesign-required",
+                "key_differences": "Silicon photonics — different loss profile and chirp characteristics; needs carrier board respin",
+                "why_better": "Long-term resilience: SiPh fabs are 10x more numerous than InP; eliminates geo concentration risk",
+                "estimated_availability": "Design kit available now; tape-out in 6 months",
+            },
+        ],
+    },
     {
         "mpn": "QSFP-DD-400G-DR4",
         "manufacturer": "Coherent Corp.",
@@ -783,7 +839,7 @@ SAMPLE_RESULTS = [
 RISK_ICONS = {"RED": "🔴", "YELLOW": "🟡", "GREEN": "🟢"}
 
 
-def pill(risk: str, label: str | None = None) -> str:
+def pill(risk: str, label=None) -> str:
     text = label or risk
     return f'<span class="pill pill-{risk}">{text}</span>'
 
