@@ -1520,15 +1520,15 @@ def render_action_buttons() -> None:
         '<div class="rb-row">'
         '<a class="rb rb-hoverborder" href="?action=upload" target="_self">'
         '<span class="rb-ripple-layer"></span>'
-        '<span class="rb-label">&#x1F4E4; Upload BOM</span>'
+        '<span class="rb-label">Upload BOM</span>'
         '</a>'
         '<a class="rb rb-default" href="?action=sample" target="_self">'
         '<span class="rb-ripple-layer"></span>'
-        '<span class="rb-label">&#9889; Try Sample BOM</span>'
+        '<span class="rb-label">Try Sample BOM</span>'
         '</a>'
         '<a class="rb rb-hover" href="mailto:hello@catena.ai">'
         '<span class="rb-ripple-layer"></span>'
-        '<span class="rb-label">&#9993; Contact Us</span>'
+        '<span class="rb-label">Contact Us</span>'
         '</a>'
         '</div>',
         unsafe_allow_html=True,
