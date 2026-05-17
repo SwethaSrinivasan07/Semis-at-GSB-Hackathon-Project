@@ -48,15 +48,12 @@ html, body, [class*="css"] {
     max-width: 1200px;
 }
 
-/* ── Sidebar ── */
-[data-testid="stSidebar"] {
-    background-color: #09090b !important;
-    border-right: 1px solid #27272a !important;
-}
-section[data-testid="stSidebar"] > div {
-    background-color: #09090b !important;
-    padding-top: 1.5rem;
-}
+/* ── Hide sidebar — replaced by top navbar ── */
+[data-testid="stSidebar"],
+[data-testid="collapsedControl"] { display: none !important; }
+
+/* ── Top padding to clear fixed navbar ── */
+.main .block-container { padding-top: 4.5rem !important; }
 
 /* ── Typography ── */
 h1, h2, h3 {
@@ -1186,6 +1183,206 @@ def build_text_report(results: list) -> bytes:
     return "\n".join(lines).encode()
 
 
+# ─── Top navbar (Navbar1 port) ───────────────────────────────────────────────
+def render_navbar() -> None:
+    """Fixed top navigation bar — CSS-only dropdowns, checkbox-hack mobile menu."""
+    st.markdown("""
+<style>
+/* ── Navbar ── */
+.sl-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+    height: 56px;
+    background: rgba(9,9,11,0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid #27272a;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px;
+    font-family: 'Inter', -apple-system, sans-serif;
+}
+/* ── Logo ── */
+.sl-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; flex-shrink: 0; }
+.sl-logo-box {
+    width: 26px; height: 26px; background: #8b5cf6; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; line-height: 1;
+}
+.sl-logo-text {
+    font-size: 0.95rem; font-weight: 700; letter-spacing: -0.025em;
+    background: linear-gradient(90deg, #fafafa 50%, #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+/* ── Desktop nav items ── */
+.sl-menu { display: flex; align-items: center; gap: 2px; list-style: none; margin: 0; padding: 0; }
+.sl-item { position: relative; }
+.sl-link {
+    display: flex; align-items: center; gap: 4px;
+    padding: 6px 13px; border-radius: 7px;
+    font-size: 0.83rem; font-weight: 500; color: #71717a;
+    text-decoration: none; cursor: pointer; white-space: nowrap;
+    transition: background 0.14s, color 0.14s;
+    background: none; border: none; font-family: 'Inter', sans-serif;
+}
+.sl-link:hover, .sl-item:hover > .sl-link { background: #18181b; color: #fafafa; }
+.sl-chevron { width: 11px; height: 11px; opacity: 0.45; transition: transform 0.2s, opacity 0.2s; }
+.sl-item:hover .sl-chevron { transform: rotate(180deg); opacity: 1; }
+/* ── Dropdown ── */
+.sl-drop {
+    display: none; position: absolute; top: calc(100% + 10px); left: 0;
+    min-width: 270px; background: #0d0d0f;
+    border: 1px solid #27272a; border-radius: 13px; padding: 6px;
+    box-shadow: 0 20px 56px rgba(0,0,0,0.7); z-index: 100;
+}
+.sl-item:hover .sl-drop { display: block; }
+.sl-drop-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 11px; border-radius: 8px;
+    text-decoration: none; transition: background 0.13s; cursor: pointer;
+}
+.sl-drop-item:hover { background: #18181b; }
+.sl-drop-icon {
+    width: 33px; height: 33px; flex-shrink: 0;
+    background: #18181b; border: 1px solid #2a2a2e; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center; color: #a78bfa;
+}
+.sl-drop-icon svg { width: 15px; height: 15px; }
+.sl-drop-title { font-size: 0.815rem; font-weight: 600; color: #fafafa; margin-bottom: 2px; }
+.sl-drop-desc  { font-size: 0.74rem; color: #52525b; line-height: 1.4; }
+/* ── Auth ── */
+.sl-auth { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.sl-btn-out {
+    padding: 6px 13px; border-radius: 7px; border: 1px solid #27272a;
+    background: transparent; color: #a1a1aa; font-size: 0.82rem; font-weight: 500;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: border-color 0.14s, color 0.14s; text-decoration: none; white-space: nowrap;
+}
+.sl-btn-out:hover { border-color: #3f3f46; color: #fafafa; }
+.sl-btn-pri {
+    padding: 6px 13px; border-radius: 7px; border: none;
+    background: #8b5cf6; color: #fff; font-size: 0.82rem; font-weight: 500;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: background 0.14s; text-decoration: none; white-space: nowrap;
+}
+.sl-btn-pri:hover { background: #7c3aed; }
+/* ── Mobile ── */
+#sl-mob-chk { display: none; }
+.sl-burger {
+    display: none; width: 36px; height: 36px; border-radius: 7px;
+    border: 1px solid #27272a; background: transparent; color: #a1a1aa;
+    align-items: center; justify-content: center; cursor: pointer;
+    flex-shrink: 0;
+}
+.sl-burger svg { width: 18px; height: 18px; }
+.sl-mob-menu {
+    display: none; position: fixed; top: 56px; left: 0; right: 0;
+    background: #09090b; border-bottom: 1px solid #27272a;
+    padding: 16px 24px 20px; z-index: 9998;
+}
+#sl-mob-chk:checked ~ .sl-mob-menu { display: block; }
+.sl-mob-link {
+    display: block; padding: 11px 0; border-bottom: 1px solid #1f1f23;
+    font-size: 0.9rem; font-weight: 600; color: #a1a1aa; text-decoration: none;
+}
+.sl-mob-link:last-of-type { border-bottom: none; }
+.sl-mob-link:hover { color: #fafafa; }
+.sl-mob-auth { display: flex; gap: 8px; margin-top: 16px; }
+@media (max-width: 820px) {
+    .sl-menu, .sl-auth { display: none; }
+    .sl-burger { display: flex; }
+}
+/* ── Gradient separator under navbar ── */
+.sl-nav-rule {
+    position: fixed; top: 56px; left: 0; right: 0; height: 1px; z-index: 9998;
+    background: linear-gradient(90deg, transparent, #6d28d9, #a78bfa, #6d28d9, transparent);
+    background-size: 200% 100%; animation: gradient-x 5s linear infinite;
+}
+</style>
+
+<input type="checkbox" id="sl-mob-chk"/>
+<div class="sl-mob-menu">
+  <a class="sl-mob-link" href="#">Dashboard</a>
+  <a class="sl-mob-link" href="#">Risk Analysis</a>
+  <a class="sl-mob-link" href="#">AVL Intelligence</a>
+  <a class="sl-mob-link" href="#">Substitution Engine</a>
+  <a class="sl-mob-link" href="#">Pricing</a>
+  <div class="sl-mob-auth">
+    <a class="sl-btn-out" href="#" style="flex:1;text-align:center;">Request Demo</a>
+    <a class="sl-btn-pri" href="#" style="flex:1;text-align:center;">Get Started</a>
+  </div>
+</div>
+
+<nav class="sl-nav">
+  <a class="sl-logo" href="#">
+    <div class="sl-logo-box">⚡</div>
+    <span class="sl-logo-text">SupplyLine</span>
+  </a>
+
+  <ul class="sl-menu">
+    <li class="sl-item"><a class="sl-link" href="#">Dashboard</a></li>
+
+    <li class="sl-item">
+      <span class="sl-link">Features
+        <svg class="sl-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </span>
+      <div class="sl-drop">
+        <a class="sl-drop-item" href="#">
+          <div class="sl-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+          <div><div class="sl-drop-title">Risk Analysis</div><div class="sl-drop-desc">6-dimension AI risk scoring across your full BOM</div></div>
+        </a>
+        <a class="sl-drop-item" href="#">
+          <div class="sl-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div><div class="sl-drop-title">AVL Intelligence</div><div class="sl-drop-desc">Approved Vendor List gap analysis and flow-down checks</div></div>
+        </a>
+        <a class="sl-drop-item" href="#">
+          <div class="sl-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg></div>
+          <div><div class="sl-drop-title">Substitution Engine</div><div class="sl-drop-desc">Design-time alternative part recommendations</div></div>
+        </a>
+        <a class="sl-drop-item" href="#">
+          <div class="sl-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+          <div><div class="sl-drop-title">Export Reports</div><div class="sl-drop-desc">Annotated Excel BOM and PDF risk briefings</div></div>
+        </a>
+      </div>
+    </li>
+
+    <li class="sl-item">
+      <span class="sl-link">Integrations
+        <svg class="sl-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </span>
+      <div class="sl-drop">
+        <a class="sl-drop-item" href="#">
+          <div class="sl-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+          <div><div class="sl-drop-title">ERP Systems</div><div class="sl-drop-desc">SAP, Oracle and NetSuite BOM sync</div></div>
+        </a>
+        <a class="sl-drop-item" href="#">
+          <div class="sl-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <div><div class="sl-drop-title">Distributor APIs</div><div class="sl-drop-desc">Live pricing from Arrow, Avnet and Digi-Key</div></div>
+        </a>
+        <a class="sl-drop-item" href="#">
+          <div class="sl-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div><div class="sl-drop-title">Team Collaboration</div><div class="sl-drop-desc">Share risk reports with procurement and engineering</div></div>
+        </a>
+      </div>
+    </li>
+
+    <li class="sl-item"><a class="sl-link" href="#">Pricing</a></li>
+    <li class="sl-item"><a class="sl-link" href="#">Docs</a></li>
+  </ul>
+
+  <div class="sl-auth">
+    <a class="sl-btn-out" href="#">Request Demo</a>
+    <a class="sl-btn-pri" href="#">Get Started</a>
+  </div>
+
+  <label class="sl-burger" for="sl-mob-chk">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </label>
+</nav>
+<div class="sl-nav-rule"></div>
+""", unsafe_allow_html=True)
+
+
 # ─── Feature section (empty-state landing) ───────────────────────────────────
 def render_feature_section() -> None:
     """Tabbed feature showcase rendered via components.html — shown on landing state."""
@@ -1394,42 +1591,15 @@ def render_feature_section() -> None:
     components.html(html, height=660, scrolling=False)
 
 
-# ─── Sidebar ─────────────────────────────────────────────────────────────────
-with st.sidebar:
-    st.markdown("""
-<div class="sidebar-logo">
-  <div class="sidebar-logo-title">⚡ SupplyLine</div>
-  <div class="sidebar-logo-caption">Design-time supply chain intelligence</div>
-</div>
-""", unsafe_allow_html=True)
-
-    st.markdown('<div class="sidebar-section">Risk Thresholds</div>', unsafe_allow_html=True)
-    lead_red   = st.number_input("Lead time RED (weeks)",    value=16, min_value=1,  max_value=52,  step=1)
-    lead_yel   = st.number_input("Lead time YELLOW (weeks)", value=8,  min_value=1,  max_value=52,  step=1)
-    stock_min  = st.number_input("Min acceptable stock",     value=100, min_value=0, max_value=10000, step=10)
-    price_spike = st.number_input("Price spike threshold (%)", value=30, min_value=0, max_value=200,  step=5)
-
-    st.markdown('<div class="sidebar-section">Filters</div>', unsafe_allow_html=True)
-    show_red    = st.toggle("Show HIGH RISK (RED)",    value=True)
-    show_yellow = st.toggle("Show MEDIUM RISK (YELLOW)", value=True)
-    show_green  = st.toggle("Show LOW RISK (GREEN)",   value=True)
-
-    st.markdown('<div class="sidebar-section">Resources</div>', unsafe_allow_html=True)
-    st.download_button(
-        "📥 Download Sample BOM",
-        data=SAMPLE_BOM_CSV.encode(),
-        file_name="sample_bom.csv",
-        mime="text/csv",
-        use_container_width=True,
-    )
-    st.markdown(
-        '<p style="font-size:0.7rem; color:#52525b; margin-top:8px;">CSV format · MPN, Manufacturer,<br>Quantity, Reference Designators</p>',
-        unsafe_allow_html=True,
-    )
+# ─── Sidebar replaced by top navbar — static defaults ────────────────────────
+show_red    = True
+show_yellow = True
+show_green  = True
 
 
 # ─── Main ────────────────────────────────────────────────────────────────────
 inject_css()
+render_navbar()
 
 st.markdown("""
 <div style="margin-bottom:0;">
@@ -1440,7 +1610,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ── Upload row ────────────────────────────────────────────────────────────────
-col_upload, col_sample, col_demo, col_analyze = st.columns([4, 1.2, 1.2, 1.6])
+col_upload, col_sample, col_analyze = st.columns([4, 1.4, 1.8])
 
 with col_upload:
     uploaded_file = st.file_uploader(
@@ -1452,9 +1622,6 @@ with col_upload:
 
 with col_sample:
     sample_clicked = st.button("Try Sample BOM", use_container_width=True)
-
-with col_demo:
-    demo_clicked = st.button("Demo Mode", use_container_width=True)
 
 with col_analyze:
     analyze_clicked = st.button(
@@ -1468,7 +1635,7 @@ if "results" not in st.session_state:
     st.session_state.results = None
 
 # ── Trigger logic ─────────────────────────────────────────────────────────────
-if sample_clicked or demo_clicked:
+if sample_clicked:
     st.session_state.results = SAMPLE_RESULTS
 
 if analyze_clicked:
