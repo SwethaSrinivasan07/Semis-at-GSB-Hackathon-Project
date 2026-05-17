@@ -42,7 +42,7 @@ st.set_page_config(
 def inject_css():
     st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
     --bg:            #F4F7FF;
@@ -64,7 +64,7 @@ def inject_css():
 }
 
 html, body, [class*="css"] {
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
 }
 
 /* ── App shell ── */
@@ -90,7 +90,7 @@ section[data-testid="stSidebar"] > div {
 
 /* ── Typography ── */
 h1, h2, h3 {
-    font-family: 'Playfair Display', Georgia, serif !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
     font-weight: 700 !important;
     letter-spacing: -0.01em !important;
     color: var(--text-primary) !important;
@@ -111,7 +111,7 @@ label, .stTextInput label, .stNumberInput label, .stSelectbox label {
     margin-bottom: 24px;
 }
 .sidebar-logo-title {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-size: 1.2rem;
     font-weight: 700;
     color: var(--text-primary);
@@ -166,7 +166,7 @@ label, .stTextInput label, .stNumberInput label, .stSelectbox label {
     margin-bottom: 10px;
 }
 .metric-value {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-size: 2.4rem;
     font-weight: 700;
     color: var(--text-primary);
@@ -228,6 +228,18 @@ label, .stTextInput label, .stNumberInput label, .stSelectbox label {
     text-transform: uppercase;
     color: var(--text-muted);
     font-weight: 600;
+}
+
+/* ── Component image (top of expanded part card) ── */
+.part-image {
+    display: block;
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 14px rgba(15,23,42,0.05);
+    margin: 4px 0 18px;
 }
 
 /* ── Detail section inside expander ── */
@@ -373,7 +385,7 @@ label, .stTextInput label, .stNumberInput label, .stSelectbox label {
     border: 1px solid var(--border-strong) !important;
     color: var(--text-secondary) !important;
     border-radius: var(--radius-sm) !important;
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
     font-size: 0.85rem !important;
     font-weight: 600 !important;
     box-shadow: var(--shadow-sm) !important;
@@ -428,7 +440,7 @@ label, .stTextInput label, .stNumberInput label, .stSelectbox label {
     border: 1px solid var(--border-strong) !important;
     color: var(--text-primary) !important;
     border-radius: var(--radius-sm) !important;
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
 }
 [data-testid="stNumberInput"] input:focus,
 [data-testid="stTextInput"]   input:focus {
@@ -489,7 +501,7 @@ hr { border-color: var(--border) !important; margin: 24px 0 !important; }
     border: 1px solid rgba(37,99,235,0.08);
 }
 .app-hero h1 {
-    font-family: 'Playfair Display', Georgia, serif !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
     font-size: 2.2rem !important;
     font-weight: 700 !important;
     color: var(--text-primary) !important;
@@ -535,7 +547,7 @@ hr { border-color: var(--border) !important; margin: 24px 0 !important; }
        independently (see .sl-menu rule below). */
     display: flex; align-items: center; justify-content: flex-end;
     padding: 0 28px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 .sl-nav a, .sl-nav a:hover, .sl-nav a:focus, .sl-nav a:visited,
 .sl-nav span, .sl-nav div { text-decoration: none !important; }
@@ -565,7 +577,7 @@ hr { border-color: var(--border) !important; margin: 24px 0 !important; }
     font-size: 0.85rem; font-weight: 500; color: #64748B;
     text-decoration: none; cursor: pointer; white-space: nowrap;
     transition: background 0.14s, color 0.14s;
-    background: none; border: none; font-family: 'Plus Jakarta Sans', sans-serif;
+    background: none; border: none; font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 .sl-link:hover, .sl-item:hover > .sl-link { background: #F1F5F9; color: #0F172A; }
 .sl-chevron { width: 12px; height: 12px; opacity: 0.45; transition: transform 0.2s, opacity 0.2s; }
@@ -594,18 +606,17 @@ hr { border-color: var(--border) !important; margin: 24px 0 !important; }
 .sl-btn-out {
     padding: 7px 14px; border-radius: 8px; border: 1px solid rgba(37,99,235,0.22);
     background: transparent; color: #475569; font-size: 0.83rem; font-weight: 500;
-    cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer; font-family: 'Inter', system-ui, -apple-system, sans-serif;
     transition: all 0.14s; text-decoration: none; white-space: nowrap;
 }
 .sl-btn-out:hover { border-color: #2563EB; color: #2563EB; background: #EFF6FF; }
 .sl-btn-pri {
-    padding: 7px 14px; border-radius: 8px; border: none;
-    background: #2563EB; color: #fff; font-size: 0.83rem; font-weight: 600;
-    cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
-    transition: background 0.14s; text-decoration: none; white-space: nowrap;
-    box-shadow: 0 1px 4px rgba(37,99,235,0.30);
+    padding: 7px 14px; border-radius: 8px; border: 1px solid rgba(37,99,235,0.22);
+    background: transparent; color: #475569; font-size: 0.83rem; font-weight: 500;
+    cursor: pointer; font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    transition: all 0.14s; text-decoration: none; white-space: nowrap;
 }
-.sl-btn-pri:hover { background: #1D4ED8; }
+.sl-btn-pri:hover { border-color: #2563EB; color: #2563EB; background: #EFF6FF; }
 @media (max-width: 820px) { .sl-menu, .sl-auth { display: none; } }
 </style>
 """, unsafe_allow_html=True)
@@ -1175,6 +1186,13 @@ def render_part_rows(results: list) -> None:
         )
 
         with st.expander(label):
+            # Component image — visual reference for the part type.
+            img_url = image_for_part(part)
+            st.markdown(
+                f'<img class="part-image" src="{img_url}" alt="{mpn}" loading="lazy" />',
+                unsafe_allow_html=True,
+            )
+
             # Risk breakdown
             st.markdown('<div class="detail-section-header">Risk Breakdown</div>', unsafe_allow_html=True)
             render_risk_strip(flags)
@@ -1591,7 +1609,7 @@ def render_navbar() -> None:
     st.markdown(
         '<div class="sl-nav">'
         '<ul class="sl-menu">'
-        '<li class="sl-item"><a class="sl-link" href="#">Dashboard</a></li>'
+        '<li class="sl-item"><a class="sl-link" href="?view=home" target="_self">Dashboard</a></li>'
         '<li class="sl-item"><span class="sl-link">Features &#9662;</span>'
         '<div class="sl-drop">'
         '<a class="sl-drop-item" href="#"><div><div class="sl-drop-title">Risk Analysis</div><div class="sl-drop-desc">6-dimension AI risk scoring across your full BOM</div></div></a>'
@@ -1621,10 +1639,10 @@ def render_feature_section() -> None:
 <html lang="en">
 <head><meta charset="UTF-8"/>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
   *, *::before, *::after { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #F4F7FF;
-    font-family: 'Plus Jakarta Sans', sans-serif; color: #0F172A; }
+    font-family: 'Inter', system-ui, -apple-system, sans-serif; color: #0F172A; }
 
   .section  { padding: 32px 0 12px; }
   .container { max-width: 100%; padding: 0 4px; }
@@ -1643,7 +1661,7 @@ def render_feature_section() -> None:
     gap: 14px; text-align: center; margin-bottom: 32px;
   }
   .section-header h1 {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em;
     color: #0F172A; max-width: 540px; line-height: 1.25; margin: 0;
   }
@@ -1656,7 +1674,7 @@ def render_feature_section() -> None:
     border-radius: 10px; border: 1px solid transparent;
     background: transparent; color: #64748B;
     font-size: 0.83rem; font-weight: 600; cursor: pointer;
-    transition: all 0.15s; font-family: 'Plus Jakarta Sans', sans-serif; outline: none;
+    transition: all 0.15s; font-family: 'Inter', system-ui, -apple-system, sans-serif; outline: none;
   }
   .tab-btn:hover { background: #F1F5F9; color: #0F172A; border-color: rgba(37,99,235,0.10); }
   .tab-btn.active { background: #EFF6FF; color: #2563EB; border-color: rgba(37,99,235,0.20); }
@@ -1682,14 +1700,14 @@ def render_feature_section() -> None:
     font-size: 0.68rem; font-weight: 700; color: #2563EB;
     background: #EFF6FF; letter-spacing: 0.07em; text-transform: uppercase; width: fit-content;
   }
-  .panel-title { font-family: 'Playfair Display', Georgia, serif; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; color: #0F172A; line-height: 1.2; margin: 0; }
+  .panel-title { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; color: #0F172A; line-height: 1.2; margin: 0; }
   .panel-desc  { color: #64748B; line-height: 1.65; font-size: 0.875rem; margin: 0; }
   .panel-btn {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 10px 22px; background: #2563EB; color: #fff;
     border-radius: 9px; border: none; font-size: 0.875rem; font-weight: 600;
     cursor: pointer; width: fit-content; margin-top: 4px;
-    font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.14s;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif; transition: background 0.14s;
     box-shadow: 0 1px 4px rgba(37,99,235,0.28);
   }
   .panel-btn:hover { background: #1D4ED8; }
@@ -1725,7 +1743,7 @@ def render_feature_section() -> None:
         <div class="panel-text">
           <span class="panel-badge">AI-Powered</span>
           <h3 class="panel-title">Catch 60-week lead times before you're locked in.</h3>
-          <p class="panel-desc">Claude analyzes every line of your BOM across six risk dimensions — availability, lead time, cost, lifecycle, geopolitical exposure, and vendor concentration — in seconds. No surprises at procurement.</p>
+          <p class="panel-desc">Catena analyzes every line of your BOM across six risk dimensions — availability, lead time, cost, lifecycle, geopolitical exposure, and vendor concentration — in seconds. No surprises at procurement.</p>
           <button class="panel-btn">Analyze a BOM &rarr;</button>
         </div>
         <img class="panel-img" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=700&q=80" alt="Risk analytics dashboard" loading="lazy"/>
@@ -2257,22 +2275,10 @@ show_green  = True
 inject_css()
 render_navbar()
 
-st.markdown("""
-<div class="app-hero">
-  <h1>⚡ Catena</h1>
-  <p>Design-Time Supply Chain Intelligence for Photonics OEMs</p>
-</div>
-""", unsafe_allow_html=True)
+render_hero()
 
 # ── Action buttons (ripple-styled — Upload / Try Sample / Contact) ───────────
 render_action_buttons()
-
-with col_analyze:
-    analyze_clicked = st.button(
-        "⚡ Analyze with Claude",
-        use_container_width=True,
-        type="primary",
-    )
 
 # ── Session state ─────────────────────────────────────────────────────────────
 if "results" not in st.session_state:
@@ -2307,8 +2313,12 @@ if st.session_state.results:
     # Metric cards
     render_metric_cards(results)
 
-    # Download row
-    col_dl1, col_dl2, _ = st.columns([1.5, 1.5, 4])
+    # Download + home row
+    col_home, col_dl1, col_dl2, _ = st.columns([1.2, 1.6, 1.6, 3.6])
+    with col_home:
+        if st.button("← Home", use_container_width=True, key="home_btn"):
+            st.session_state.results = None
+            st.rerun()
     with col_dl1:
         st.download_button(
             "📊 Annotated BOM (Excel)",
