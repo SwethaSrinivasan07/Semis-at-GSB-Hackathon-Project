@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
+import streamlit.components.v1 as components
 
 # ─── Backend integration (graceful fallback) ─────────────────────────────────
 try:
@@ -81,7 +82,11 @@ label, .stTextInput label, .stNumberInput label, .stSelectbox label {
     font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: -0.02em;
-    color: #fafafa;
+    background: linear-gradient(90deg, #fafafa 55%, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
 }
 .sidebar-logo-caption {
     font-size: 0.72rem;
@@ -111,6 +116,8 @@ label, .stTextInput label, .stNumberInput label, .stSelectbox label {
     border: 1px solid #27272a;
     border-radius: 8px;
     padding: 16px 20px;
+    transition: transform 0.18s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
 }
 .metric-card-red   { border-color: rgba(239,68,68,0.4); }
 .metric-card-yellow{ border-color: rgba(234,179,8,0.4); }
@@ -161,7 +168,7 @@ label, .stTextInput label, .stNumberInput label, .stSelectbox label {
     border-radius: 50%;
     flex-shrink: 0;
 }
-.dot-RED    { background: #f87171; }
+.dot-RED    { background: #f87171; animation: pulse-ring 2.2s ease-out infinite; }
 .dot-YELLOW { background: #facc15; }
 .dot-GREEN  { background: #4ade80; }
 
@@ -453,6 +460,102 @@ hr { border-color: #27272a !important; margin: 20px 0 !important; }
 ::-webkit-scrollbar-track { background: #09090b; }
 ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+/* ── Animations ── */
+@keyframes pulse-ring {
+    0%   { box-shadow: 0 0 0 0   rgba(248,113,113,0.55); }
+    70%  { box-shadow: 0 0 0 7px rgba(248,113,113,0); }
+    100% { box-shadow: 0 0 0 0   rgba(248,113,113,0); }
+}
+@keyframes gradient-x {
+    0%, 100% { background-position: 0%   50%; }
+    50%       { background-position: 100% 50%; }
+}
+@keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0);   }
+}
+@keyframes word-rotate {
+    0%   { opacity: 0; transform: translateY(8px);  }
+    3%   { opacity: 1; transform: translateY(0);    }
+    17%  { opacity: 1; transform: translateY(0);    }
+    23%  { opacity: 0; transform: translateY(-8px); }
+    100% { opacity: 0; transform: translateY(8px);  }
+}
+
+/* ── Animated gradient accent bar ── */
+.gradient-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #6d28d9, #a78bfa, #6d28d9, transparent);
+    background-size: 200% 100%;
+    animation: gradient-x 5s linear infinite;
+    margin: 14px 0 22px;
+    border-radius: 1px;
+}
+
+/* ── Hero section ── */
+.hero-title {
+    font-size: 1.9rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.03em !important;
+    color: #fafafa !important;
+    margin: 0 0 5px !important;
+    line-height: 1.2 !important;
+}
+.hero-sub {
+    font-size: 0.875rem;
+    color: #71717a;
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: nowrap;
+    gap: 0;
+}
+.rotating-container {
+    display: inline-block;
+    position: relative;
+    height: 1.2em;
+    overflow: hidden;
+    vertical-align: bottom;
+    min-width: 78px;
+    margin-left: 4px;
+}
+.rword {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #a78bfa;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: word-rotate 10s infinite;
+    animation-fill-mode: backwards;
+    white-space: nowrap;
+}
+.rword:nth-child(1) { animation-delay: 0s;  }
+.rword:nth-child(2) { animation-delay: 2s;  }
+.rword:nth-child(3) { animation-delay: 4s;  }
+.rword:nth-child(4) { animation-delay: 6s;  }
+.rword:nth-child(5) { animation-delay: 8s;  }
+
+/* ── Metric card hover glow ── */
+.metric-card:hover                { transform: translateY(-2px); }
+.metric-card-red:hover    { box-shadow: 0 8px 28px rgba(248,113,113,0.2);  border-color: rgba(248,113,113,0.65) !important; }
+.metric-card-yellow:hover { box-shadow: 0 8px 28px rgba(250,204,21,0.16);  border-color: rgba(250,204,21,0.65)  !important; }
+.metric-card-green:hover  { box-shadow: 0 8px 28px rgba(74,222,128,0.16);  border-color: rgba(74,222,128,0.65)  !important; }
+
+/* ── Substitute card hover ── */
+.sub-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.sub-card:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+.sub-drop-in:hover  { border-left-color: #86efac; }
+.sub-minor:hover    { border-left-color: #fde047; }
+.sub-redesign:hover { border-left-color: #fca5a5; }
+
+/* ── Parts list fade-in ── */
+[data-testid="stExpander"] { animation: fade-in-up 0.28s ease-out both; }
 
 /* ── Hide Streamlit chrome ── */
 #MainMenu, footer, header { visibility: hidden; }
@@ -1083,6 +1186,214 @@ def build_text_report(results: list) -> bytes:
     return "\n".join(lines).encode()
 
 
+# ─── Feature section (empty-state landing) ───────────────────────────────────
+def render_feature_section() -> None:
+    """Tabbed feature showcase rendered via components.html — shown on landing state."""
+    html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #09090b;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; color: #fafafa; }
+
+  .section  { padding: 40px 0 8px; }
+  .container { max-width: 100%; padding: 0 4px; }
+
+  /* ── Badge ── */
+  .badge {
+    display: inline-flex; align-items: center; border-radius: 9999px;
+    border: 1px solid #3f3f46; padding: 3px 12px;
+    font-size: 0.68rem; font-weight: 600; color: #71717a;
+    letter-spacing: 0.07em; text-transform: uppercase;
+  }
+
+  /* ── Section header ── */
+  .section-header {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 14px; text-align: center; margin-bottom: 36px;
+  }
+  .section-header h1 {
+    font-size: 1.75rem; font-weight: 700; letter-spacing: -0.03em;
+    color: #fafafa; max-width: 540px; line-height: 1.25; margin: 0;
+  }
+  .section-header p {
+    color: #71717a; font-size: 0.875rem; max-width: 460px;
+    line-height: 1.6; margin: 0;
+  }
+
+  /* ── Tab list ── */
+  .tabs-list {
+    display: flex; justify-content: center; gap: 6px;
+    margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .tab-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 9px 18px; border-radius: 12px; border: none;
+    background: transparent; color: #52525b;
+    font-size: 0.825rem; font-weight: 600; cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: 'Inter', sans-serif; outline: none;
+  }
+  .tab-btn:hover { background: #1c1c1f; color: #a1a1aa; }
+  .tab-btn.active { background: #1c1c1f; color: #fafafa; }
+  .tab-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+  /* ── Content box ── */
+  .tabs-content {
+    background: #18181b; border: 1px solid #27272a;
+    border-radius: 20px; padding: 40px;
+  }
+
+  /* ── Panels ── */
+  .tab-panel {
+    display: none; grid-template-columns: 1fr 1fr;
+    gap: 48px; align-items: center;
+  }
+  .tab-panel.active {
+    display: grid;
+    animation: panel-in 0.22s ease-out both;
+  }
+  @keyframes panel-in {
+    from { opacity: 0; transform: translateY(7px); }
+    to   { opacity: 1; transform: translateY(0);   }
+  }
+
+  /* ── Panel text ── */
+  .panel-text { display: flex; flex-direction: column; gap: 16px; }
+  .panel-badge {
+    display: inline-flex; align-items: center; border-radius: 9999px;
+    border: 1px solid #3f3f46; padding: 3px 12px;
+    font-size: 0.68rem; font-weight: 600; color: #71717a;
+    background: #09090b; letter-spacing: 0.07em;
+    text-transform: uppercase; width: fit-content;
+  }
+  .panel-title {
+    font-size: 1.65rem; font-weight: 700; letter-spacing: -0.025em;
+    color: #fafafa; line-height: 1.2; margin: 0;
+  }
+  .panel-desc {
+    color: #71717a; line-height: 1.65;
+    font-size: 0.875rem; margin: 0;
+  }
+  .panel-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 22px; background: #8b5cf6; color: #fff;
+    border-radius: 8px; border: none; font-size: 0.875rem;
+    font-weight: 500; cursor: pointer; width: fit-content;
+    margin-top: 6px; font-family: 'Inter', sans-serif;
+    transition: background 0.15s; text-decoration: none;
+  }
+  .panel-btn:hover { background: #7c3aed; }
+
+  /* ── Panel image ── */
+  .panel-img {
+    border-radius: 14px; width: 100%; aspect-ratio: 4/3;
+    object-fit: cover; border: 1px solid #27272a;
+    display: block;
+  }
+</style>
+</head>
+<body>
+<section class="section">
+  <div class="container">
+
+    <div class="section-header">
+      <span class="badge">SupplyLine</span>
+      <h1>Design-time intelligence for every line of your BOM.</h1>
+      <p>From photonics PICs to passive components — know your supply chain risk before you're committed to a design.</p>
+    </div>
+
+    <div class="tabs-list">
+      <button class="tab-btn active" onclick="switchTab(event,'risk')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        Risk Analysis
+      </button>
+      <button class="tab-btn" onclick="switchTab(event,'avl')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        AVL Intelligence
+      </button>
+      <button class="tab-btn" onclick="switchTab(event,'sub')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="6" y1="3" x2="6" y2="15"/>
+          <circle cx="18" cy="6" r="3"/>
+          <circle cx="6" cy="18" r="3"/>
+          <path d="M18 9a9 9 0 0 1-9 9"/>
+        </svg>
+        Substitution Engine
+      </button>
+    </div>
+
+    <div class="tabs-content">
+
+      <!-- Risk Analysis -->
+      <div id="panel-risk" class="tab-panel active">
+        <div class="panel-text">
+          <span class="panel-badge">AI-Powered</span>
+          <h3 class="panel-title">Catch 60-week lead times before you're locked in.</h3>
+          <p class="panel-desc">Claude analyzes every line of your BOM across six risk dimensions — availability, lead time, cost, lifecycle, geopolitical exposure, and vendor concentration — in seconds. No surprises at procurement.</p>
+          <button class="panel-btn">Analyze a BOM &rarr;</button>
+        </div>
+        <img class="panel-img"
+          src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=700&q=80"
+          alt="Supply chain risk analytics dashboard" loading="lazy"/>
+      </div>
+
+      <!-- AVL Intelligence -->
+      <div id="panel-avl" class="tab-panel">
+        <div class="panel-text">
+          <span class="panel-badge">Supplier Aware</span>
+          <h3 class="panel-title">Know your AVL gaps before qualification starts.</h3>
+          <p class="panel-desc">SupplyLine cross-references your BOM against your Approved Vendor List, surfaces coverage gaps, and flags customer flow-down restrictions — Verizon, AT&T, DoD — that would otherwise surface at contract review.</p>
+          <button class="panel-btn">Upload Your AVL &rarr;</button>
+        </div>
+        <img class="panel-img"
+          src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=700&q=80"
+          alt="Network and supply chain visualization" loading="lazy"/>
+      </div>
+
+      <!-- Substitution Engine -->
+      <div id="panel-sub" class="tab-panel">
+        <div class="panel-text">
+          <span class="panel-badge">Design-Time</span>
+          <h3 class="panel-title">Find a drop-in before the shortage hits.</h3>
+          <p class="panel-desc">When a part flags RED, SupplyLine surfaces qualified alternatives ranked by compatibility — drop-in, minor rework, or redesign — alongside availability windows and AVL qualification status. Act at design-time, not crunch-time.</p>
+          <button class="panel-btn">See Alternatives &rarr;</button>
+        </div>
+        <img class="panel-img"
+          src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=700&q=80"
+          alt="Electronic and photonic circuit components" loading="lazy"/>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  function switchTab(event, tabId) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      p.classList.remove('active');
+      p.style.animation = 'none';
+    });
+    event.currentTarget.classList.add('active');
+    const panel = document.getElementById('panel-' + tabId);
+    panel.offsetHeight; // force reflow before re-adding class
+    panel.style.animation = '';
+    panel.classList.add('active');
+  }
+</script>
+</body>
+</html>"""
+    components.html(html, height=660, scrolling=False)
+
+
 # ─── Sidebar ─────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("""
@@ -1121,11 +1432,10 @@ with st.sidebar:
 inject_css()
 
 st.markdown("""
-<div style="margin-bottom:28px;">
-  <h1 style="margin-bottom:6px; font-size:1.8rem;">⚡ SupplyLine</h1>
-  <p style="color:#52525b; font-size:0.875rem; margin:0;">
-    Design-Time Supply Chain Intelligence for Photonics OEMs
-  </p>
+<div style="margin-bottom:0;">
+  <h1 class="hero-title">⚡ SupplyLine</h1>
+  <p class="hero-sub">Design-time risk intelligence&nbsp;&mdash;&nbsp;<span class="rotating-container"><span class="rword">faster.</span><span class="rword">smarter.</span><span class="rword">clearer.</span><span class="rword">earlier.</span><span class="rword">safer.</span></span></p>
+  <div class="gradient-line"></div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -1229,13 +1539,5 @@ if st.session_state.results:
         )
 
 else:
-    # Empty / landing state
-    st.markdown("""
-<div class="empty-state">
-  <div class="empty-state-icon">🔍</div>
-  <div class="empty-state-text">
-    Upload a BOM CSV or click <strong style="color:#a1a1aa;">Try Sample BOM</strong>
-    to see design-time supply chain risk analysis.
-  </div>
-</div>
-""", unsafe_allow_html=True)
+    # Landing state — feature showcase
+    render_feature_section()
