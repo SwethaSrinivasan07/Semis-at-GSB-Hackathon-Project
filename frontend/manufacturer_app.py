@@ -1207,70 +1207,34 @@ def build_text_report(results: list) -> bytes:
 # ─── Navbar ──────────────────────────────────────────────────────────────────
 def render_navbar() -> None:
     """Top navigation bar — CSS lives in inject_css(), only clean HTML here."""
-    st.markdown("""
-<nav class="sl-nav">
-  <a class="sl-logo" href="#">
-    <div class="sl-logo-box">⚡</div>
-    <span class="sl-logo-text">SupplyLine</span>
-  </a>
-
-  <ul class="sl-menu">
-    <li class="sl-item"><a class="sl-link" href="#">Dashboard</a></li>
-
-    <li class="sl-item">
-      <span class="sl-link">Features
-        <svg class="sl-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </span>
-      <div class="sl-drop">
-        <a class="sl-drop-item" href="#">
-          <div class="sl-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-          <div><div class="sl-drop-title">Risk Analysis</div><div class="sl-drop-desc">6-dimension AI risk scoring across your full BOM</div></div>
-        </a>
-        <a class="sl-drop-item" href="#">
-          <div class="sl-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-          <div><div class="sl-drop-title">AVL Intelligence</div><div class="sl-drop-desc">Approved Vendor List gap analysis and flow-down checks</div></div>
-        </a>
-        <a class="sl-drop-item" href="#">
-          <div class="sl-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg></div>
-          <div><div class="sl-drop-title">Substitution Engine</div><div class="sl-drop-desc">Design-time alternative part recommendations</div></div>
-        </a>
-        <a class="sl-drop-item" href="#">
-          <div class="sl-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
-          <div><div class="sl-drop-title">Export Reports</div><div class="sl-drop-desc">Annotated Excel BOM and PDF risk briefings</div></div>
-        </a>
-      </div>
-    </li>
-
-    <li class="sl-item">
-      <span class="sl-link">Integrations
-        <svg class="sl-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </span>
-      <div class="sl-drop">
-        <a class="sl-drop-item" href="#">
-          <div class="sl-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-          <div><div class="sl-drop-title">ERP Systems</div><div class="sl-drop-desc">SAP, Oracle and NetSuite BOM sync</div></div>
-        </a>
-        <a class="sl-drop-item" href="#">
-          <div class="sl-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-          <div><div class="sl-drop-title">Distributor APIs</div><div class="sl-drop-desc">Live pricing from Arrow, Avnet and Digi-Key</div></div>
-        </a>
-        <a class="sl-drop-item" href="#">
-          <div class="sl-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-          <div><div class="sl-drop-title">Team Collaboration</div><div class="sl-drop-desc">Share risk reports with procurement and engineering</div></div>
-        </a>
-      </div>
-    </li>
-
-    <li class="sl-item"><a class="sl-link" href="#">Pricing</a></li>
-    <li class="sl-item"><a class="sl-link" href="#">Docs</a></li>
-  </ul>
-
-  <div class="sl-auth">
-    <a class="sl-btn-out" href="#">Request Demo</a>
-    <a class="sl-btn-pri" href="#">Get Started</a>
-  </div>
-</nav>
-""", unsafe_allow_html=True)
+    st.markdown(
+        '<div class="sl-nav">'
+        '<a class="sl-logo" href="#"><div class="sl-logo-box">&#9889;</div><span class="sl-logo-text">SupplyLine</span></a>'
+        '<ul class="sl-menu">'
+        '<li class="sl-item"><a class="sl-link" href="#">Dashboard</a></li>'
+        '<li class="sl-item"><span class="sl-link">Features &#9662;</span>'
+        '<div class="sl-drop">'
+        '<a class="sl-drop-item" href="#"><div><div class="sl-drop-title">Risk Analysis</div><div class="sl-drop-desc">6-dimension AI risk scoring across your full BOM</div></div></a>'
+        '<a class="sl-drop-item" href="#"><div><div class="sl-drop-title">AVL Intelligence</div><div class="sl-drop-desc">Approved Vendor List gap analysis and flow-down checks</div></div></a>'
+        '<a class="sl-drop-item" href="#"><div><div class="sl-drop-title">Substitution Engine</div><div class="sl-drop-desc">Design-time alternative part recommendations</div></div></a>'
+        '<a class="sl-drop-item" href="#"><div><div class="sl-drop-title">Export Reports</div><div class="sl-drop-desc">Annotated Excel BOM and PDF risk briefings</div></div></a>'
+        '</div></li>'
+        '<li class="sl-item"><span class="sl-link">Integrations &#9662;</span>'
+        '<div class="sl-drop">'
+        '<a class="sl-drop-item" href="#"><div><div class="sl-drop-title">ERP Systems</div><div class="sl-drop-desc">SAP, Oracle and NetSuite BOM sync</div></div></a>'
+        '<a class="sl-drop-item" href="#"><div><div class="sl-drop-title">Distributor APIs</div><div class="sl-drop-desc">Live pricing from Arrow, Avnet and Digi-Key</div></div></a>'
+        '<a class="sl-drop-item" href="#"><div><div class="sl-drop-title">Team Collaboration</div><div class="sl-drop-desc">Share risk reports with procurement and engineering</div></div></a>'
+        '</div></li>'
+        '<li class="sl-item"><a class="sl-link" href="#">Pricing</a></li>'
+        '<li class="sl-item"><a class="sl-link" href="#">Docs</a></li>'
+        '</ul>'
+        '<div class="sl-auth">'
+        '<a class="sl-btn-out" href="#">Request Demo</a>'
+        '<a class="sl-btn-pri" href="#">Get Started</a>'
+        '</div>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
 
 
 # ─── Feature section (landing state) ─────────────────────────────────────────
