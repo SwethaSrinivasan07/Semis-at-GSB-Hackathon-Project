@@ -1,0 +1,158 @@
+{
+  "oem_name": "Ciena Networks (Demo)",
+  "description": "Approved Vendor List for 400G/800G Optical Line Card Programs",
+  "last_updated": "2025-05-01",
+
+  "by_category": {
+    "transceiver":        ["Coherent Corp", "Lumentum", "InnoLight", "Applied Optoelectronics"],
+    "photonic_ic":        ["Coherent Corp"],
+    "coherent_dsp":       ["Cisco/Acacia"],
+    "asic":               ["Broadcom"],
+    "fpga":               ["Intel", "AMD/Xilinx"],
+    "power":              ["Texas Instruments", "Analog Devices", "Renesas"],
+    "memory":             ["Samsung", "SK Hynix", "Micron"],
+    "timing":             ["Microchip Technology", "Texas Instruments", "Silicon Labs"],
+    "passive":            ["Murata", "TDK", "Yageo"],
+    "connector":          ["Molex", "TE Connectivity", "Amphenol"],
+    "optical_component":  ["Coherent Corp", "Lumentum"]
+  },
+
+  "by_mpn": {
+    "QSFP-DD-400G-ZR":    ["Coherent Corp", "Lumentum"],
+    "QSFP-DD-400G-ZR+":   ["Coherent Corp", "Lumentum"],
+    "CFP2-DCO-100G":      ["Coherent Corp"],
+    "OSFP-800G-DR8":      ["Coherent Corp", "InnoLight"],
+    "QSFP28-100G-LR4":    ["Coherent Corp", "InnoLight", "Lumentum", "Accelink"],
+    "QSFP-DD-400G-SR8":   ["Coherent Corp", "Lumentum", "InnoLight", "Eoptolink"]
+  },
+
+  "customer_restrictions": {
+    "Verizon": [
+      "InnoLight", "Eoptolink", "Accelink", "Hisense Broadband", "O-Net"
+    ],
+    "AT&T": [
+      "InnoLight", "Eoptolink"
+    ],
+    "US Federal / DoD programs": [
+      "InnoLight", "Eoptolink", "Accelink", "Hisense Broadband",
+      "O-Net", "HiSilicon"
+    ],
+    "Hyperscale / No restrictions": []
+  },
+
+  "qualification_status": {
+    "Coherent Corp": {
+      "status": "Preferred",
+      "since": "2018",
+      "programs": ["all"],
+      "notes": "Primary source; capacity constrained Q1-Q3 2025 due to hyperscaler demand"
+    },
+    "Lumentum": {
+      "status": "Approved",
+      "since": "2020",
+      "programs": ["all"],
+      "notes": "Strong second source for coherent transceivers"
+    },
+    "InnoLight": {
+      "status": "Conditional",
+      "since": "2022",
+      "programs": ["non-carrier", "hyperscale", "enterprise"],
+      "notes": "Blocked for Verizon, AT&T, and all US Federal programs"
+    },
+    "Applied Optoelectronics": {
+      "status": "Approved",
+      "since": "2021",
+      "programs": ["all including US Federal"],
+      "notes": "US-manufactured; cleared for DoD/restricted programs; higher cost"
+    },
+    "Cisco/Acacia": {
+      "status": "Preferred",
+      "since": "2017",
+      "programs": ["all"],
+      "notes": "Post-Cisco acquisition: external supply constrained; qualification being reviewed"
+    },
+    "Broadcom": {
+      "status": "Preferred",
+      "since": "2014",
+      "programs": ["all"],
+      "notes": "Single source for Tomahawk/Trident merchant silicon"
+    },
+    "Intel": {
+      "status": "Preferred",
+      "since": "2016",
+      "programs": ["all"],
+      "notes": "Agilex 5/7 qualified; lead times 28-36 weeks on advanced nodes"
+    },
+    "AMD/Xilinx": {
+      "status": "Conditional",
+      "since": "2023",
+      "programs": ["new designs only"],
+      "notes": "Versal AI Core qualified; Verizon programs require waiver"
+    },
+    "Texas Instruments": {
+      "status": "Preferred",
+      "since": "2015",
+      "programs": ["all"]
+    },
+    "Analog Devices": {
+      "status": "Approved",
+      "since": "2017",
+      "programs": ["all"]
+    },
+    "Renesas": {
+      "status": "Approved",
+      "since": "2020",
+      "programs": ["all"]
+    },
+    "Samsung": {
+      "status": "Preferred",
+      "since": "2016",
+      "programs": ["all"]
+    },
+    "SK Hynix": {
+      "status": "Approved",
+      "since": "2019",
+      "programs": ["all"]
+    },
+    "Micron": {
+      "status": "Approved",
+      "since": "2020",
+      "programs": ["all"]
+    },
+    "Murata": {
+      "status": "Preferred",
+      "since": "2010",
+      "programs": ["all"]
+    },
+    "TDK": {
+      "status": "Approved",
+      "since": "2012",
+      "programs": ["all"]
+    },
+    "Yageo": {
+      "status": "Approved",
+      "since": "2018",
+      "programs": ["all"]
+    },
+    "Molex": {
+      "status": "Preferred",
+      "since": "2011",
+      "programs": ["all"]
+    },
+    "TE Connectivity": {
+      "status": "Approved",
+      "since": "2013",
+      "programs": ["all"]
+    },
+    "Amphenol": {
+      "status": "Approved",
+      "since": "2015",
+      "programs": ["all"]
+    },
+    "Microchip Technology": {
+      "status": "Preferred",
+      "since": "2014",
+      "programs": ["all"]
+    }
+  }
+}

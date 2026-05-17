@@ -1,0 +1,11 @@
+Part Number,Description,Manufacturer,Quantity,Reference Designators
+QSFP-DD-400G-ZR,400G ZR QSFP-DD Coherent Transceiver 120km,Coherent Corp,8,J1-J8
+CFP2-DCO-100G,100G DWDM CFP2-DCO Coherent Module,Coherent Corp,4,J9-J12
+INP-PIC-400G-TX,400G InP Photonic Integrated Circuit TX,II-VI,2,U1 U2
+TPS546D24A,4.5V-17V 40A Step-Down Converter,Texas Instruments,12,U10-U21
+AGFB014R24A2E2,Intel Agilex 5 FPGA E-Series,Intel,2,U3 U4
+MT40A2G8SA-075,16Gb DDR5 SDRAM,Micron,16,U30-U45
+GRM188R61C106MAALD,100nF MLCC 0402 X5R 16V,Murata,500,C1-C500
+SFP-2X30S-18-0,QSFP-DD Cage 2x1 Press-fit,Molex,8,J1-J8
+ABLS2-24.576MHZ,24.576MHz Crystal Oscillator,Abracon,4,Y1-Y4
+BCM56990,Tomahawk 4 400G Ethernet Switch ASIC,Broadcom,1,U5
