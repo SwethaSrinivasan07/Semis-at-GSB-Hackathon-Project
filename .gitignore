@@ -19,3 +19,10 @@ Thumbs.db
 # Editors
 .vscode/
 .idea/
+
+# Claude Code internals
+.claude/
+
+# Generated PPTX exports and slide screenshots
+*.pptx
+slide_images/

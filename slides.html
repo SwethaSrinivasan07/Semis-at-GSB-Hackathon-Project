@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Catena — Semis @ GSB 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:   #1E3A5F;
+    --blue:   #2563EB;
+    --blue-mid: #60A5FA;
+    --blue-light: #BFDBFE;
+    --blue-pale:  #EFF6FF;
+    --blue-bg:    #F0F7FF;
+    --white:  #FFFFFF;
+    --text:   #0F172A;
+    --muted:  #64748B;
+    --red:    #DC2626;
+    --amber:  #D97706;
+    --green:  #059669;
+    --serif:  'Playfair Display', Georgia, serif;
+    --sans:   'Plus Jakarta Sans', sans-serif;
+  }
+
+  html, body {
+    font-family: var(--sans);
+    background: #1a1a2e;
+    color: var(--text);
+  }
+
+  /* ── Slide shell ── */
+  .slide {
+    width: 1280px;
+    height: 720px;
+    margin: 32px auto;
+    position: relative;
+    overflow: hidden;
+    background: var(--blue-bg);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+
+  /* ── Decorative blobs ── */
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .blob-tl { width: 320px; height: 320px; top: -80px; left: -80px; background: var(--blue-light); opacity: 0.45; }
+  .blob-tr { width: 220px; height: 220px; top: -60px; right: -40px; background: var(--blue-mid); opacity: 0.25; }
+  .blob-br { width: 260px; height: 260px; bottom: -70px; right: -60px; background: var(--blue-light); opacity: 0.35; }
+  .blob-bl { width: 180px; height: 180px; bottom: -50px; left: -30px; background: var(--blue-mid); opacity: 0.20; }
+  .blob-sm { width: 100px; height: 100px; opacity: 0.18; }
+
+  /* ── Slide number tag ── */
+  .slide-tag {
+    position: absolute;
+    top: 28px; right: 36px;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue);
+    opacity: 0.5;
+  }
+
+  /* ── Corner rule ── */
+  .corner-rule {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--blue) 0%, var(--blue-mid) 100%);
+  }
+
+  /* ─────────────────────────────────────────
+     SLIDE 1 — Cover
+  ───────────────────────────────────────── */
+  #s1 {
+    background: var(--blue-bg);
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0 100px;
+  }
+  .s1-badge {
+    display: inline-block;
+    background: var(--blue);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 5px 14px;
+    border-radius: 99px;
+    margin-bottom: 28px;
+  }
+  .s1-title {
+    font-family: var(--serif);
+    font-size: 80px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.0;
+    margin-bottom: 20px;
+  }
+  .s1-title span { color: var(--blue); }
+  .s1-sub {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.5;
+    margin-bottom: 52px;
+  }
+  .s1-meta {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+  }
+  .s1-team {
+    font-size: 14px;
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .s1-team span { color: var(--muted); font-weight: 400; display: block; font-size: 12px; margin-top: 2px; }
+  .s1-divider { width: 1px; height: 36px; background: var(--blue-light); }
+  .s1-event { font-size: 13px; font-weight: 600; color: var(--blue); }
+  .s1-event span { display: block; color: var(--muted); font-weight: 400; font-size: 12px; margin-top: 2px; }
+
+  /* card visual on right */
+  .s1-card {
+    position: absolute;
+    right: 80px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 380px;
+    background: var(--white);
+    border-radius: 20px;
+    padding: 28px 32px;
+    box-shadow: 0 4px 30px rgba(37,99,235,0.12);
+    border: 1px solid rgba(37,99,235,0.10);
+  }
+  .s1-card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .s1-stat { margin-bottom: 18px; }
+  .s1-stat-val {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .s1-stat-val.red { color: var(--red); }
+  .s1-stat-val.blue { color: var(--blue); }
+  .s1-stat-desc { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .s1-divline { height: 1px; background: var(--blue-light); margin: 4px 0 18px; }
+
+
+  /* ─────────────────────────────────────────
+     SLIDE 2 — Problem
+  ───────────────────────────────────────── */
+  #s2 { background: var(--blue-bg); padding: 56px 80px; }
+  .s2-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    color: var(--blue); margin-bottom: 12px;
+  }
+  .s2-heading {
+    font-family: var(--serif);
+    font-size: 42px; font-weight: 700;
+    color: var(--navy); line-height: 1.15;
+    max-width: 560px; margin-bottom: 40px;
+  }
+  .s2-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; }
+  .s2-col { display: flex; flex-direction: column; gap: 16px; }
+  .s2-card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 20px 24px;
+    border: 1px solid rgba(37,99,235,0.08);
+    box-shadow: 0 2px 12px rgba(37,99,235,0.06);
+    flex: 1;
+  }
+  .s2-card.accent { background: var(--navy); }
+  .s2-card-num {
+    font-family: var(--serif);
+    font-size: 44px; font-weight: 700;
+    color: var(--red); line-height: 1;
+    margin-bottom: 6px;
+  }
+  .s2-card-num.blue { color: var(--blue); }
+  .s2-card-num.amber { color: var(--amber); }
+  .s2-card-num.white { color: var(--white); }
+  .s2-card-body { font-size: 13px; color: var(--muted); font-weight: 500; line-height: 1.5; }
+  .s2-card.accent .s2-card-body { color: #93C5FD; }
+
+  .s2-timeline {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 20px 24px;
+    border: 1px solid rgba(37,99,235,0.08);
+    box-shadow: 0 2px 12px rgba(37,99,235,0.06);
+    grid-column: 1 / -1;
+  }
+  .s2-timeline-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.10em;
+    color: var(--muted); margin-bottom: 14px;
+  }
+  .s2-bar {
+    display: flex; align-items: center; gap: 0;
+    border-radius: 8px; overflow: hidden;
+    height: 36px;
+  }
+  .s2-bar-seg {
+    height: 100%; display: flex; align-items: center;
+    padding: 0 14px;
+    font-size: 11px; font-weight: 700; color: white;
+    white-space: nowrap;
+  }
+  .s2-bar-seg.design  { background: var(--blue); flex: 2; }
+  .s2-bar-seg.proto   { background: #60A5FA; flex: 1.5; color: var(--navy); }
+  .s2-bar-seg.source  { background: var(--red); flex: 1; }
+  .s2-bar-note { font-size: 11px; color: var(--muted); margin-top: 8px; font-weight: 500; }
+
+
+  /* ─────────────────────────────────────────
+     SLIDE 3 — Product
+  ───────────────────────────────────────── */
+  #s3 { background: var(--blue-bg); padding: 52px 80px; }
+  .s3-top { margin-bottom: 32px; }
+  .s3-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    color: var(--blue); margin-bottom: 10px;
+  }
+  .s3-heading {
+    font-family: var(--serif);
+    font-size: 40px; font-weight: 700;
+    color: var(--navy); line-height: 1.2;
+    max-width: 640px;
+  }
+  .s3-body { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; align-items: start; }
+  .s3-steps { display: flex; flex-direction: column; gap: 14px; }
+  .s3-step {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 16px 20px;
+    border: 1px solid rgba(37,99,235,0.08);
+    box-shadow: 0 2px 10px rgba(37,99,235,0.05);
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .s3-step-num {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--blue); color: white;
+    font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .s3-step-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+  .s3-step-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  .s3-right { display: flex; flex-direction: column; gap: 14px; }
+  .s3-pill-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+  .s3-pill {
+    border-radius: 99px; padding: 5px 13px;
+    font-size: 11px; font-weight: 700;
+    border: 1.5px solid;
+  }
+  .s3-pill.red    { background: #FEF2F2; border-color: #FECACA; color: #B91C1C; }
+  .s3-pill.amber  { background: #FFFBEB; border-color: #FDE68A; color: #92400E; }
+  .s3-pill.green  { background: #ECFDF5; border-color: #A7F3D0; color: #065F46; }
+  .s3-pill.blue   { background: #EFF6FF; border-color: #BFDBFE; color: #1D4ED8; }
+
+  .s3-metric-card {
+    background: var(--navy);
+    border-radius: 14px;
+    padding: 20px 24px;
+    color: white;
+  }
+  .s3-metric-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: #93C5FD; margin-bottom: 6px; }
+  .s3-metric-val {
+    font-family: var(--serif);
+    font-size: 38px; font-weight: 700; color: white; line-height: 1;
+    margin-bottom: 4px;
+  }
+  .s3-metric-desc { font-size: 12px; color: #93C5FD; font-weight: 500; }
+
+  .s3-vs {
+    background: var(--white);
+    border-radius: 14px; padding: 16px 20px;
+    border: 1px solid rgba(37,99,235,0.08);
+  }
+  .s3-vs-label { font-size: 10px; font-weight: 700; letter-spacing: 0.10em; color: var(--muted); margin-bottom: 10px; }
+  .s3-vs-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .s3-vs-item { font-size: 12px; font-weight: 600; color: var(--navy); }
+  .s3-vs-bad { font-size: 12px; color: var(--red); font-weight: 600; }
+  .s3-vs-good { font-size: 12px; color: var(--green); font-weight: 600; }
+
+
+  /* ─────────────────────────────────────────
+     SLIDE 4 — Demo (blank)
+  ───────────────────────────────────────── */
+  #s4 {
+    background: var(--navy);
+    align-items: center;
+    justify-content: center;
+  }
+  .s4-inner { text-align: center; }
+  .s4-icon {
+    font-size: 52px; margin-bottom: 20px;
+    opacity: 0.8;
+  }
+  .s4-label {
+    font-family: var(--serif);
+    font-size: 48px; font-weight: 700;
+    color: white;
+    margin-bottom: 12px;
+  }
+  .s4-sub {
+    font-size: 16px; color: #93C5FD;
+    font-weight: 500;
+  }
+  #s4 .corner-rule { background: linear-gradient(90deg, var(--blue-mid) 0%, var(--blue-light) 100%); }
+  #s4 .blob-tl { background: #1D4ED8; opacity: 0.3; }
+  #s4 .blob-br { background: #3B82F6; opacity: 0.2; }
+
+
+  /* ─────────────────────────────────────────
+     SLIDE 5 — Build + Learnings
+  ───────────────────────────────────────── */
+  #s5 { background: var(--blue-bg); padding: 52px 80px; }
+  .s5-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    color: var(--blue); margin-bottom: 10px;
+  }
+  .s5-heading {
+    font-family: var(--serif);
+    font-size: 40px; font-weight: 700;
+    color: var(--navy); line-height: 1.2;
+    margin-bottom: 28px;
+  }
+  .s5-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .s5-col { display: flex; flex-direction: column; gap: 16px; }
+  .s5-col-head {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+    color: var(--blue); margin-bottom: 4px;
+  }
+  .s5-card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 18px 22px;
+    border: 1px solid rgba(37,99,235,0.08);
+    box-shadow: 0 2px 10px rgba(37,99,235,0.05);
+  }
+  .s5-card-title { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 5px; }
+  .s5-card-desc { font-size: 12px; color: var(--muted); line-height: 1.5; font-weight: 500; }
+  .s5-card.accent-blue { background: var(--blue); }
+  .s5-card.accent-blue .s5-card-title { color: white; }
+  .s5-card.accent-blue .s5-card-desc { color: #BFDBFE; }
+  .s5-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .s5-tag {
+    background: var(--blue-light); color: var(--navy);
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 99px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     Slide 1 — Cover
+══════════════════════════════════════════ -->
+<div class="slide" id="s1">
+  <div class="blob blob-tl"></div>
+  <div class="blob blob-tr"></div>
+  <div class="blob blob-bl"></div>
+  <div class="corner-rule"></div>
+
+  <div class="slide-tag">Semis @ GSB · May 2026</div>
+
+  <div class="s1-badge">Hackathon Project</div>
+  <div class="s1-title">Cat<span>ena</span></div>
+  <div class="s1-sub">Design-time supply chain intelligence for photonics OEMs.</div>
+
+  <div class="s1-meta">
+    <div class="s1-team">
+      Swetha, Jed, Parul, Josh
+      <span>Team Catena</span>
+    </div>
+    <div class="s1-divider"></div>
+    <div class="s1-event">
+      Semis @ GSB Hackathon
+      <span>Stanford GSB · May 2026</span>
+    </div>
+  </div>
+
+  <div class="s1-card">
+    <div class="s1-card-label">The numbers that matter</div>
+
+    <div class="s1-stat">
+      <div class="s1-stat-val red">52 weeks</div>
+      <div class="s1-stat-desc">InP photonic chip lead time — discovered after tape-out</div>
+    </div>
+    <div class="s1-divline"></div>
+    <div class="s1-stat">
+      <div class="s1-stat-val blue">11–13%</div>
+      <div class="s1-stat-desc">margin Avnet and Arrow take on a $100B market</div>
+    </div>
+    <div class="s1-divline"></div>
+    <div class="s1-stat">
+      <div class="s1-stat-val" style="color: var(--amber);">20%</div>
+      <div class="s1-stat-desc">Arrow revenue decline in 2024 — disruption already started</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     Slide 2 — Problem
+══════════════════════════════════════════ -->
+<div class="slide" id="s2">
+  <div class="blob blob-tl"></div>
+  <div class="blob blob-br"></div>
+  <div class="corner-rule"></div>
+  <div class="slide-tag">The problem</div>
+
+  <div class="s2-eyebrow">A design-time information problem</div>
+  <div class="s2-heading">Engineers lock in supply chains 12 months before procurement ever looks.</div>
+
+  <div class="s2-cols">
+    <div class="s2-col">
+      <div class="s2-card">
+        <div class="s2-card-num">3</div>
+        <div class="s2-card-body">InP wafer fabs globally. Two of them in geopolitically sensitive regions. Zero alternatives for coherent photonic chips.</div>
+      </div>
+      <div class="s2-card">
+        <div class="s2-card-num amber">60%</div>
+        <div class="s2-card-body">of Coherent's transceiver capacity allocated to hyperscalers right now. OEMs compete for the rest.</div>
+      </div>
+    </div>
+    <div class="s2-col">
+      <div class="s2-card">
+        <div class="s2-card-num blue">5–7 yrs</div>
+        <div class="s2-card-body">One component choice at design time locks in a supply chain for the life of the program.</div>
+      </div>
+      <div class="s2-card accent">
+        <div class="s2-card-num white">$0</div>
+        <div class="s2-card-body">spent on supply chain tooling at design time. SiliconExpert is owned by Arrow — the distributor with a conflict of interest.</div>
+      </div>
+    </div>
+
+    <div class="s2-timeline">
+      <div class="s2-timeline-label">Where supply chain risk is created vs. discovered</div>
+      <div class="s2-bar">
+        <div class="s2-bar-seg design">Design time — risk created here</div>
+        <div class="s2-bar-seg proto">Prototyping</div>
+        <div class="s2-bar-seg source">Procurement scramble</div>
+      </div>
+      <div class="s2-bar-note">By the time procurement discovers a 52-week lead time, the design is already locked. Nobody has a tool for the left side of this bar.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     Slide 3 — Product
+══════════════════════════════════════════ -->
+<div class="slide" id="s3">
+  <div class="blob blob-tl"></div>
+  <div class="blob blob-br"></div>
+  <div class="corner-rule"></div>
+  <div class="slide-tag">The product</div>
+
+  <div class="s3-top">
+    <div class="s3-eyebrow">Catena</div>
+    <div class="s3-heading">Upload a BOM. Know every risk before tape-out.</div>
+  </div>
+
+  <div class="s3-body">
+    <div class="s3-steps">
+      <div class="s3-step">
+        <div class="s3-step-num">1</div>
+        <div>
+          <div class="s3-step-title">Upload your BOM</div>
+          <div class="s3-step-desc">CSV or Excel. Claude parses it instantly — no templates required.</div>
+        </div>
+      </div>
+      <div class="s3-step">
+        <div class="s3-step-num">2</div>
+        <div>
+          <div class="s3-step-title">Risk scored across 6 dimensions</div>
+          <div class="s3-step-desc">Availability, lead time, cost, lifecycle, geopolitical exposure, vendor concentration. Every part. Red / Yellow / Green.</div>
+          <div class="s3-pill-group" style="margin-top: 8px;">
+            <span class="s3-pill red">Red</span>
+            <span class="s3-pill amber">Yellow</span>
+            <span class="s3-pill green">Green</span>
+          </div>
+        </div>
+      </div>
+      <div class="s3-step">
+        <div class="s3-step-num">3</div>
+        <div>
+          <div class="s3-step-title">Ranked substitutes, ready to act on</div>
+          <div class="s3-step-desc">Drop-in, minor rework, or redesign — with compatibility grade, qualification timeline, and why each one works.</div>
+        </div>
+      </div>
+      <div class="s3-step">
+        <div class="s3-step-num">4</div>
+        <div>
+          <div class="s3-step-title">Annotated BOM exported</div>
+          <div class="s3-step-desc">Color-coded Excel. Engineer sends it to procurement. Procurement sends it to leadership. Same picture in minutes.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="s3-right">
+      <div class="s3-metric-card">
+        <div class="s3-metric-label">Target market</div>
+        <div class="s3-metric-val">$10–15B</div>
+        <div class="s3-metric-desc">photonics transceiver market per year. 2% capture = $200–300M. No inventory, pure orchestration.</div>
+      </div>
+
+      <div class="s3-vs">
+        <div class="s3-vs-label">vs. existing tools</div>
+        <div class="s3-vs-row">
+          <div class="s3-vs-item">SiliconExpert</div>
+          <div class="s3-vs-bad">owned by Arrow</div>
+        </div>
+        <div class="s3-vs-row">
+          <div class="s3-vs-item">Octopart</div>
+          <div class="s3-vs-bad">no AVL, no AI</div>
+        </div>
+        <div class="s3-vs-row">
+          <div class="s3-vs-item">Avnet / Arrow reps</div>
+          <div class="s3-vs-bad">2-week turnaround</div>
+        </div>
+        <div class="s3-vs-row" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--blue-light);">
+          <div class="s3-vs-item">Catena</div>
+          <div class="s3-vs-good">design-time, AI-native</div>
+        </div>
+      </div>
+
+      <div class="s3-card" style="background: var(--white); border-radius: 14px; padding: 16px 20px; border: 1px solid rgba(37,99,235,0.08);">
+        <div class="s3-vs-label">Phase 1 revenue model</div>
+        <div style="font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 4px;">$50–200K / year</div>
+        <div style="font-size: 12px; color: var(--muted); font-weight: 500;">SaaS per OEM. Phase 2: 1.5–2.5% on direct OEM-to-manufacturer transactions.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     Slide 4 — Demo (blank)
+══════════════════════════════════════════ -->
+<div class="slide" id="s4">
+  <div class="blob blob-tl"></div>
+  <div class="blob blob-br"></div>
+  <div class="corner-rule"></div>
+
+  <div class="s4-inner">
+    <div class="s4-icon">▶</div>
+    <div class="s4-label">Live demo</div>
+    <div class="s4-sub">Video embed goes here</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     Slide 5 — Build + Learnings
+══════════════════════════════════════════ -->
+<div class="slide" id="s5">
+  <div class="blob blob-tl"></div>
+  <div class="blob blob-br"></div>
+  <div class="corner-rule"></div>
+  <div class="slide-tag">How we built it</div>
+
+  <div class="s5-eyebrow">The build</div>
+  <div class="s5-heading">Four workstreams, one weekend.</div>
+
+  <div class="s5-grid">
+    <div class="s5-col">
+      <div class="s5-col-head">What we built</div>
+      <div class="s5-card">
+        <div class="s5-card-title">Streamlit dashboard + FastAPI backend</div>
+        <div class="s5-card-desc">Full-stack app: BOM upload, risk dashboard, substitute cards, annotated Excel export. Deployed from Git with four parallel feature branches.</div>
+        <div class="s5-tags">
+          <span class="s5-tag">Python</span>
+          <span class="s5-tag">Streamlit</span>
+          <span class="s5-tag">FastAPI</span>
+          <span class="s5-tag">Claude API</span>
+        </div>
+      </div>
+      <div class="s5-card accent-blue">
+        <div class="s5-card-title">AI layer: Claude as the intelligence core</div>
+        <div class="s5-card-desc">BOM parsing, 6-dimension risk scoring, photonics-specific substitution reasoning, and plain-English VP-level risk briefings. All powered by claude-sonnet-4-6.</div>
+      </div>
+    </div>
+
+    <div class="s5-col">
+      <div class="s5-col-head">What we learned</div>
+      <div class="s5-card">
+        <div class="s5-card-title">The problem is deeper than procurement</div>
+        <div class="s5-card-desc">Every engineer we talked to confirmed: the issue is at design time, not sourcing time. No one has built a tool that lives there.</div>
+      </div>
+      <div class="s5-card">
+        <div class="s5-card-title">AVL awareness is the real moat</div>
+        <div class="s5-card-desc">Any tool can flag a long lead time. Knowing which alternates are already on a customer's Approved Vendor List — and which need 6-18 months of qualification — is where the value actually lives.</div>
+      </div>
+      <div class="s5-card">
+        <div class="s5-card-title">Nokia / Infinera is the wedge</div>
+        <div class="s5-card-desc">$6.65B merger, two BOMs merging, two AVLs conflicting. Maximum supply chain chaos. Maximum willingness to pay.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function scaleSlides() {
+    const vw = window.innerWidth;
+    const scale = Math.min(1, (vw - 32) / 1280);
+    const scaledW = 1280 * scale;
+    const scaledH = 720 * scale;
+    const ml = Math.max(0, (vw - scaledW) / 2);
+    document.querySelectorAll('.slide').forEach(s => {
+      s.style.transform = `scale(${scale})`;
+      s.style.transformOrigin = 'top left';
+      s.style.marginLeft = ml + 'px';
+      s.style.marginRight = '0';
+      s.style.marginTop = '16px';
+      s.style.marginBottom = (-(720 - scaledH) + 16) + 'px';
+    });
+  }
+  scaleSlides();
+  window.addEventListener('resize', scaleSlides);
+</script>
+</body>
+</html>
