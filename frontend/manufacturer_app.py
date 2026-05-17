@@ -2,6 +2,7 @@
 Catena — Design-Time Supply Chain Intelligence for Photonics OEMs
 """
 
+import base64
 import io
 import sys
 from pathlib import Path
@@ -19,9 +20,19 @@ except ImportError:
     BACKEND_AVAILABLE = False
 
 # ─── Page config ─────────────────────────────────────────────────────────────
+# Use the bundled brand logo as the browser-tab favicon if available;
+# otherwise fall back to the lightning-bolt emoji.
+_assets_dir = Path(__file__).parent / "assets"
+_favicon_path = next(
+    (p for p in (_assets_dir / n for n in
+                 ("logo 2.jpeg", "logo 2.jpg", "logo 2.png",
+                  "logo.jpeg", "logo.jpg", "logo.png", "logo.webp"))
+     if p.exists()),
+    None,
+)
 st.set_page_config(
     page_title="Catena",
-    page_icon="⚡",
+    page_icon=str(_favicon_path) if _favicon_path else "⚡",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -517,33 +528,49 @@ hr { border-color: var(--border) !important; margin: 24px 0 !important; }
 [data-testid="stSidebar"],
 [data-testid="collapsedControl"] { display: none !important; }
 
-/* ── Bump content below fixed navbar ── */
-.main .block-container { padding-top: 5rem !important; }
+/* ── Bump content below fixed navbar (88px tall now) ── */
+.main .block-container { padding-top: 7rem !important; }
 
 /* ══════════════════════════════════════════
    NAVBAR (Navbar1 port — light theme)
 ═══════════════════════════════════════════ */
 .sl-nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
-    height: 58px;
+    /* Taller than typical so the full Catena logo (C-mark + stylized
+       wordmark + tagline) renders legibly on the right side. */
+    height: 88px;
     background: rgba(255,255,255,0.96);
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(37,99,235,0.10);
     box-shadow: 0 1px 8px rgba(15,23,42,0.06);
-    display: flex; align-items: center; justify-content: space-between;
+    /* flex-end keeps the logo on the right; the menu is absolute-centered
+       independently (see .sl-menu rule below). */
+    display: flex; align-items: center; justify-content: flex-end;
     padding: 0 28px;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 .sl-nav a, .sl-nav a:hover, .sl-nav a:focus, .sl-nav a:visited,
 .sl-nav span, .sl-nav div { text-decoration: none !important; }
-.sl-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; flex-shrink: 0; }
-.sl-logo-box {
-    width: 28px; height: 28px; background: transparent; border-radius: 7px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; line-height: 1; color: #2563EB;
+/* Top-right brand logo — full composite image (icon + stylized "CATENA"
+   wordmark + tagline). Clickable target returns to the home view. */
+.sl-logo { display: flex; align-items: center; flex-shrink: 0; }
+.sl-logo-img {
+    height: 80px; width: 80px;
+    object-fit: contain;
+    display: block;
+    pointer-events: none;
+    -webkit-user-drag: none;
 }
-.sl-logo-text { font-size: 1rem; font-weight: 700; letter-spacing: -0.02em; color: #0F172A; }
-.sl-menu { display: flex; align-items: center; gap: 1px; list-style: none; margin: 0; padding: 0; }
+/* Menu absolute-centered within the navbar so it stays in the middle of
+   the viewport regardless of how much space the logo on the right takes. */
+.sl-menu {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex; align-items: center; gap: 1px;
+    list-style: none; margin: 0; padding: 0;
+}
 .sl-item { position: relative; }
 .sl-link {
     display: flex; align-items: center; gap: 4px; padding: 6px 13px; border-radius: 8px;
@@ -979,40 +1006,64 @@ RISK_ICONS = {"RED": "🔴", "YELLOW": "🟡", "GREEN": "🟢"}
 # keyword matching against MPN + description. Images are visual context only
 # (per the brief: "does not need to match 100%"), served from Unsplash CDN
 # with auto-format & crop so they're light and consistent.
-_COMPONENT_IMAGES = {
-    # Photonic / fiber / coherent optics / transceivers — fiber strand bundle
-    "photonic":   "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=640&q=70",
-    # DSP / ASIC / SoC / FPGA / processor — IC die / chip macro
-    "asic":       "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=640&q=70",
-    # Crystal oscillator / VCXO / clocking — densely populated SMD board
-    "oscillator": "https://images.unsplash.com/photo-1597852074816-d933c7d2b988?auto=format&fit=crop&w=640&q=70",
-    # Ethernet PHY / networking — patch panel with cables
-    "phy":        "https://images.unsplash.com/photo-1551808525-51a94da548ce?auto=format&fit=crop&w=640&q=70",
-    # Default — Adi Goldstein "green PCB with gold traces" (one of the most
-    # widely-referenced electronics stock photos on Unsplash).
-    "default":    "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=640&q=70",
+# Curated Unsplash pool — hand-verified semiconductor / photonics / networking
+# photos only. Kept intentionally small so every image is on-topic; MPNs share.
+_IMG = "https://images.unsplash.com/{pid}?auto=format&fit=crop&w=640&q=70"
+_PART_IMAGE_POOL = [
+    # 0  Adi Goldstein: green PCB with Apple-style chip — most-cited
+    #    semiconductor stock photo on Unsplash. Use for IC/SoC/ASIC parts.
+    _IMG.format(pid="photo-1518770660439-4636190af475"),
+    # 1  Compare Fibre: bundle of yellow single-mode fiber strands — the
+    #    canonical fiber-optics stock photo. Use for photonic parts.
+    _IMG.format(pid="photo-1558494949-ef010cbdcc31"),
+    # 2  Vishnu Mohanan: densely-populated PCB macro with SMD components.
+    _IMG.format(pid="photo-1597852074816-d933c7d2b988"),
+    # 3  Umberto: blue circuit-board macro with traces and ICs.
+    _IMG.format(pid="photo-1555255707-c07966088b7b"),
+]
+
+# Explicit per-MPN mapping. Some MPNs share images — better than risking an
+# off-topic photo. All four pool entries are verified electronics.
+_MPN_IMAGE_INDEX = {
+    "OP-27635":         1,  # InP PIC          → yellow fiber strands
+    "QSFP-DD-400G-DR4": 1,  # QSFP-DD          → yellow fiber strands
+    "AFCT-5765ATZ":     1,  # SFP+ transceiver → yellow fiber strands
+    "INPHI-K200Q2-1":   0,  # Coherent DSP     → green PCB w/ chips
+    "LX2160ACPE24-RE":  0,  # Network SoC      → green PCB w/ chips
+    "GN1103-DQFP":      3,  # PAM4 CDR         → blue circuit board
+    "TAS5766MDCA":      3,  # Class-D amp      → blue circuit board
+    "CXO7050Q8-106.25": 2,  # VCXO             → dense SMD board
+    "VSC8514XKN":       2,  # GbE PHY          → dense SMD board
 }
 
 
+def _part_short_name(description: str) -> str:
+    """Pull the short part name out of a verbose datasheet description.
+
+    Strategy: take the text before the first em-dash, en-dash, or comma —
+    those almost always separate the part name from spec details.
+    Falls back to the first 60 chars if no separator is found.
+    """
+    if not description:
+        return ""
+    for sep in (" — ", "—", " – ", "–", ", "):
+        if sep in description:
+            return description.split(sep, 1)[0].strip()
+    return description.strip()[:60]
+
+
 def image_for_part(part: dict) -> str:
-    """Return an Unsplash URL keyed to the part's apparent category."""
-    desc = ((part.get("description") or "") + " " + (part.get("mpn") or "")).lower()
-    if any(k in desc for k in (
-        "pic", "photonic", "modulator", "qsfp", "sfp", "optic",
-        "coherent", "laser", "transceiver",
-    )):
-        return _COMPONENT_IMAGES["photonic"]
-    if any(k in desc for k in (
-        "dsp", "asic", "soc", "fpga", "processor", "cdr", "switch",
-    )):
-        return _COMPONENT_IMAGES["asic"]
-    if any(k in desc for k in (
-        "oscillator", "vcxo", "crystal", "xtal", "clock", "tcxo",
-    )):
-        return _COMPONENT_IMAGES["oscillator"]
-    if any(k in desc for k in ("phy", "ethernet", "gbe", "base-t")):
-        return _COMPONENT_IMAGES["phy"]
-    return _COMPONENT_IMAGES["default"]
+    """Return a distinct image URL for this part.
+
+    Sample-BOM MPNs are explicitly mapped (so each demo part gets a unique
+    visual). Unknown MPNs hash deterministically into the pool — same MPN
+    always lands on the same image — so non-demo BOMs also get variety.
+    """
+    mpn = (part.get("mpn") or "").strip()
+    if mpn in _MPN_IMAGE_INDEX:
+        return _PART_IMAGE_POOL[_MPN_IMAGE_INDEX[mpn]]
+    seed = sum(ord(c) for c in mpn) if mpn else 0
+    return _PART_IMAGE_POOL[seed % len(_PART_IMAGE_POOL)]
 
 
 def pill(risk: str, label=None) -> str:
@@ -1124,13 +1175,14 @@ def render_part_rows(results: list) -> None:
         price_str = f"${price:,.2f}" if price is not None else "N/A"
         stock_str = f"{stock:,}"     if stock is not None else "N/A"
         lead_str  = f"{lead}w"       if lead  is not None else "N/A"
-        desc_short = description[:70] + ("…" if len(description) > 70 else "")
 
-        # Expander label — markdown supported
-        icon = RISK_ICONS[risk]
-        label = (
-            f"{icon} &nbsp; **`{mpn}`** &nbsp;·&nbsp; {desc_short}"
-            f"&nbsp;&nbsp;&nbsp;&nbsp;{price_str} &nbsp;·&nbsp; {lead_str} lead &nbsp;·&nbsp; {stock_str} stk"
+        # Expander label — short part name + risk dot + lead/stock only.
+        # MPN and price live inside the expanded detail grid, not the row label.
+        short_name = _part_short_name(description) or mpn
+        icon       = RISK_ICONS[risk]
+        label      = (
+            f"{icon} &nbsp; **{short_name}**"
+            f"&nbsp;&nbsp;&nbsp;&nbsp;{lead_str} lead &nbsp;·&nbsp; {stock_str} stk"
         )
 
         with st.expander(label):
@@ -1377,12 +1429,185 @@ def render_hero() -> None:
     components.html(html, height=210, scrolling=False)
 
 
+# ─── Action buttons (vanilla port of multi-type-ripple-buttons) ─────────────
+def render_action_buttons() -> None:
+    """Three ripple-effect CTA buttons: Upload BOM, Try Sample BOM, Contact Us.
+
+    Vanilla-JS port of the shadcn RippleButton component. Each button gets a
+    click-point ripple animation (circle scales 0→1, fades to 0). Variants:
+      - Upload BOM     → hoverborder (animated border on hover)
+      - Try Sample BOM → default filled blue (primary action)
+      - Contact Us     → hover (background-color fill from cursor)
+
+    "Try Sample BOM" links to ?action=sample which the Python handler reads
+    to load SAMPLE_RESULTS. The other two are decorative for the demo.
+    """
+    html = """<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"/>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  *,*::before,*::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: transparent;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+  .btn-row {
+    display: flex; justify-content: center; align-items: center;
+    gap: 14px; padding: 12px 16px 16px; flex-wrap: wrap;
+  }
+
+  /* Shared button skeleton */
+  .rb {
+    position: relative;
+    border: none; background: transparent;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 0.92rem; font-weight: 600; letter-spacing: -0.01em;
+    padding: 11px 24px; border-radius: 10px;
+    cursor: pointer; overflow: hidden; isolation: isolate;
+    transition: transform 0.12s ease, box-shadow 0.18s ease;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .rb:active { transform: translateY(1px); }
+  .rb .rb-label { position: relative; z-index: 2; pointer-events: none; }
+
+  /* Variant: default (primary filled) */
+  .rb-default {
+    background: #2563EB; color: #FFFFFF;
+    box-shadow: 0 1px 3px rgba(37,99,235,0.30), 0 6px 18px rgba(37,99,235,0.20);
+  }
+  .rb-default:hover { background: #1D4ED8; }
+
+  /* Variant: hoverborder (animated outline ring on hover) */
+  .rb-hoverborder {
+    color: #0F172A; background: #FFFFFF;
+    border: 1px solid rgba(37,99,235,0.18);
+  }
+  .rb-hoverborder::before {
+    content: ''; position: absolute; inset: -1px;
+    border-radius: inherit; padding: 1.5px;
+    background: conic-gradient(from 0deg, transparent 0deg, #2563EB 90deg,
+                               #60A5FA 180deg, #2563EB 270deg, transparent 360deg);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude; -webkit-mask-composite: xor;
+    opacity: 0; transition: opacity 0.25s ease;
+    animation: rb-spin 3s linear infinite;
+    z-index: 1; pointer-events: none;
+  }
+  .rb-hoverborder:hover { color: #2563EB; }
+  .rb-hoverborder:hover::before { opacity: 1; }
+  @keyframes rb-spin { to { transform: rotate(360deg); } }
+
+  /* Variant: hover (background fills from cursor on hover) */
+  .rb-hover {
+    color: #0F172A; background: #F1F5F9;
+    border: 1px solid rgba(37,99,235,0.10);
+  }
+  .rb-hover .rb-fill {
+    position: absolute; left: 50%; top: 50%;
+    width: 0; height: 0; border-radius: 50%;
+    background: rgba(105,150,226,0.40);
+    transform: translate(-50%, -50%);
+    transition: width 0.55s ease, height 0.55s ease;
+    z-index: 1; pointer-events: none;
+  }
+  .rb-hover:hover .rb-fill { width: 380px; height: 380px; }
+  .rb-hover:hover { color: #1E40AF; }
+
+  /* Click ripple (all variants) — JS-spawned circles */
+  .rb-ripple {
+    position: absolute; border-radius: 50%;
+    pointer-events: none; z-index: 3;
+    transform: scale(0); opacity: 1;
+    animation: rb-ripple 600ms ease-out forwards;
+  }
+  .rb-default .rb-ripple   { background: rgba(255,255,255,0.45); }
+  .rb-hoverborder .rb-ripple { background: rgba(37,99,235,0.22); }
+  .rb-hover .rb-ripple     { background: rgba(37,99,235,0.20); }
+  @keyframes rb-ripple {
+    to { transform: scale(1); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="btn-row">
+  <a class="rb rb-hoverborder" id="rb-upload" href="?action=upload" target="_self">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="17 8 12 3 7 8"/>
+      <line x1="12" y1="3" x2="12" y2="15"/>
+    </svg>
+    <span class="rb-label">Upload BOM</span>
+  </a>
+
+  <a class="rb rb-default" id="rb-sample" href="?action=sample" target="_self">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    </svg>
+    <span class="rb-label">Try Sample BOM</span>
+  </a>
+
+  <a class="rb rb-hover" id="rb-contact" href="mailto:hello@catena.ai" target="_self">
+    <span class="rb-fill"></span>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+      <polyline points="22,6 12,13 2,6"/>
+    </svg>
+    <span class="rb-label">Contact Us</span>
+  </a>
+</div>
+
+<script>
+(function() {
+  // Click ripple — spawn a circle at the click point on every .rb click.
+  document.querySelectorAll('.rb').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      var rect = btn.getBoundingClientRect();
+      var size = Math.max(rect.width, rect.height) * 2;
+      var x = e.clientX - rect.left - size / 2;
+      var y = e.clientY - rect.top  - size / 2;
+      var span = document.createElement('span');
+      span.className = 'rb-ripple';
+      span.style.width = size + 'px';
+      span.style.height = size + 'px';
+      span.style.left = x + 'px';
+      span.style.top  = y + 'px';
+      btn.appendChild(span);
+      setTimeout(function(){ span.remove(); }, 620);
+    });
+  });
+})();
+</script>
+</body>
+</html>"""
+    components.html(html, height=110, scrolling=False)
+
+
 # ─── Navbar ──────────────────────────────────────────────────────────────────
 def render_navbar() -> None:
     """Top navigation bar — CSS lives in inject_css(), only clean HTML here."""
+    logo_url = _logo_data_url()
+    # Full Catena composite logo on the right side of the navbar.
+    # If the file is missing, fall back to a simple text mark.
+    if logo_url:
+        logo_html = (
+            f'<a class="sl-logo" href="?view=home" target="_self" aria-label="Catena home">'
+            f'<img class="sl-logo-img" src="{logo_url}" alt="Catena"/>'
+            f'</a>'
+        )
+    else:
+        logo_html = (
+            '<a class="sl-logo" href="?view=home" target="_self" '
+            'style="font-weight:700;font-size:1.05rem;color:#0F172A;">'
+            '&#9889; Catena</a>'
+        )
+
     st.markdown(
         '<div class="sl-nav">'
-        '<a class="sl-logo" href="?view=home" target="_self"><div class="sl-logo-box">&#9889;</div><span class="sl-logo-text">Catena</span></a>'
         '<ul class="sl-menu">'
         '<li class="sl-item"><a class="sl-link" href="?view=home" target="_self">Dashboard</a></li>'
         '<li class="sl-item"><span class="sl-link">Features &#9662;</span>'
@@ -1401,10 +1626,7 @@ def render_navbar() -> None:
         '<li class="sl-item"><a class="sl-link" href="#">Pricing</a></li>'
         '<li class="sl-item"><a class="sl-link" href="#">Docs</a></li>'
         '</ul>'
-        '<div class="sl-auth">'
-        '<a class="sl-btn-out" href="#">Request Demo</a>'
-        '<a class="sl-btn-pri" href="#">Get Started</a>'
-        '</div>'
+        + logo_html +
         '</div>',
         unsafe_allow_html=True,
     )
@@ -1784,6 +2006,265 @@ def render_testimonials() -> None:
     components.html(html, height=560, scrolling=False)
 
 
+# ─── Magnifier hero (port of view-magnifier.tsx) ─────────────────────────────
+def _asset_data_url(filename: str, mime: str = "image/jpeg",
+                    fallback: str = "") -> str:
+    """Read frontend/assets/<filename> if present and return a base64
+    data: URL. Falls back to the given URL string if the file is absent."""
+    img = Path(__file__).parent / "assets" / filename
+    if img.exists():
+        b64 = base64.b64encode(img.read_bytes()).decode("ascii")
+        return f"data:{mime};base64,{b64}"
+    return fallback
+
+
+def _magnifier_image_url() -> str:
+    """Hero magnifier image. Looks for any of the supported filenames in
+    frontend/assets/ (Picture1.webp is the user-uploaded data-center shot),
+    base64-embeds it, and falls back to a stock fiber-cable photo if none
+    are present."""
+    candidates = [
+        ("Picture1.webp",  "image/webp"),
+        ("datacenter.webp", "image/webp"),
+        ("datacenter.jpg",  "image/jpeg"),
+        ("datacenter.png",  "image/png"),
+    ]
+    for name, mime in candidates:
+        url = _asset_data_url(name, mime=mime, fallback="")
+        if url:
+            return url
+    # Last-resort fallback — canonical Compare Fibre yellow fiber photo.
+    return ("https://images.unsplash.com/photo-1558494949-ef010cbdcc31"
+            "?auto=format&fit=crop&w=1600&q=80")
+
+
+def _logo_data_url() -> str:
+    """Catena brand logo — base64 data URL. Checks a few likely filenames
+    in frontend/assets/ so the user can drop in updated variants without
+    having to rename. White-background variants render best on the light
+    theme, so newer "logo 2.*" files are preferred over the original."""
+    candidates = [
+        ("logo 2.jpeg", "image/jpeg"),
+        ("logo 2.jpg",  "image/jpeg"),
+        ("logo 2.png",  "image/png"),
+        ("logo.jpeg",   "image/jpeg"),
+        ("logo.jpg",    "image/jpeg"),
+        ("logo.png",    "image/png"),
+        ("logo.webp",   "image/webp"),
+    ]
+    for name, mime in candidates:
+        url = _asset_data_url(name, mime=mime, fallback="")
+        if url:
+            return url
+    return ""
+
+
+def render_magnifier() -> None:
+    """Press-and-drag-to-zoom hero image. Vanilla-JS port of the Framer
+    Motion view-magnifier component: hold the handle on the right edge
+    and drag right to zoom in; release to spring back to 1x."""
+    src = _magnifier_image_url()
+    html = """<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"/>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *,*::before,*::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: transparent; overflow: hidden;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif; color: #0F172A; }
+
+  .wrap {
+    padding: 48px 24px 56px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .section-head { text-align: center; max-width: 640px; margin: 0 auto 26px; }
+  .badge {
+    display: inline-flex; align-items: center; border-radius: 9999px;
+    border: 1px solid rgba(37,99,235,0.22); padding: 3px 13px;
+    font-size: 0.68rem; font-weight: 700; color: #2563EB;
+    letter-spacing: 0.07em; text-transform: uppercase; background: #EFF6FF;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.025em;
+    color: #0F172A; margin: 6px 0 10px; line-height: 1.2;
+  }
+  .section-sub {
+    color: #64748B; font-size: 0.875rem; margin: 0; line-height: 1.6;
+  }
+  .hint {
+    margin-top: 14px;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.72rem; font-weight: 600; color: #2563EB;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .hint-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #2563EB;
+    animation: hint-pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes hint-pulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50%      { opacity: 1;   transform: scale(1.35); }
+  }
+
+  .stage {
+    position: relative; width: 100%; max-width: 920px;
+    margin-top: 12px;
+  }
+  .frame {
+    position: relative; border-radius: 18px;
+    transform-origin: center center;
+    transition: box-shadow 0.3s ease;
+    will-change: transform;
+  }
+  .frame img {
+    width: 100%; display: block; border-radius: 18px;
+    border: 1px solid rgba(15,23,42,0.08);
+    box-shadow: 0 12px 32px rgba(15,23,42,0.10), 0 1px 3px rgba(15,23,42,0.06);
+    user-select: none; -webkit-user-drag: none;
+  }
+  .frame.zoomed {
+    box-shadow: 0 24px 56px rgba(15,23,42,0.20);
+  }
+
+  .handle {
+    position: absolute;
+    right: -18px; top: 50%;
+    width: 6px; height: 58px;
+    transform: translateY(-50%);
+    border-radius: 999px;
+    background: #94A3B8; border: none; padding: 0;
+    cursor: ew-resize; touch-action: none;
+    transition: background 0.18s, height 0.18s, width 0.18s;
+  }
+  .handle::after {
+    content: ''; position: absolute; inset: -12px -10px;
+  }
+  .handle:hover { background: #64748B; height: 70px; }
+  .handle.active {
+    background: #2563EB; width: 7px; height: 72px;
+    cursor: grabbing;
+    box-shadow: 0 0 0 6px rgba(37,99,235,0.12);
+  }
+
+  .zoom-readout {
+    position: absolute; left: 50%; bottom: -38px;
+    transform: translateX(-50%);
+    background: #FFFFFF; border: 1px solid rgba(37,99,235,0.18);
+    border-radius: 999px; padding: 4px 12px;
+    font-size: 0.72rem; font-weight: 700; color: #0F172A;
+    letter-spacing: 0.04em;
+    opacity: 0; transition: opacity 0.18s;
+    box-shadow: 0 4px 12px rgba(15,23,42,0.06);
+    pointer-events: none; white-space: nowrap;
+  }
+  .zoom-readout.visible { opacity: 1; }
+  .zoom-readout .accent { color: #2563EB; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="section-head">
+    <span class="badge">Hyperscale Infrastructure</span>
+    <h2 class="section-title">Built for the BOMs that power the internet</h2>
+    <p class="section-sub">Catena is designed for the supply chains behind data centers, hyperscalers, and telco networks — where a single missed lead time can stall a $50M program.</p>
+    <div class="hint"><span class="hint-dot"></span> Drag the handle to zoom</div>
+  </div>
+
+  <div class="stage">
+    <div class="frame" id="frame">
+      <img id="img" src="__IMG_SRC__" alt="Data center fiber-optic patch panels" draggable="false"/>
+      <button class="handle" id="handle" type="button"
+              role="slider" aria-label="Drag to zoom"
+              aria-valuemin="100" aria-valuemax="160" aria-valuenow="100"></button>
+    </div>
+    <div class="zoom-readout" id="readout"><span class="accent">100%</span> zoom</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var frame   = document.getElementById('frame');
+  var handle  = document.getElementById('handle');
+  var readout = document.getElementById('readout');
+  var MIN = 1.0, MAX = 1.6;
+  var scale = 1, startX = 0, startScale = 1, dragging = false, raf;
+
+  function paint() {
+    frame.style.transform = 'scale(' + scale + ')';
+    var pct = Math.round(scale * 100);
+    handle.setAttribute('aria-valuenow', String(pct));
+    readout.firstElementChild.textContent = pct + '%';
+  }
+  function setScale(s) {
+    scale = Math.max(MIN, Math.min(MAX, s));
+    paint();
+  }
+  function springTo(target) {
+    cancelAnimationFrame(raf);
+    var from = scale, t0 = performance.now(), dur = 360;
+    function tick(t) {
+      var p = Math.min(1, (t - t0) / dur);
+      // ease-out cubic
+      var e = 1 - Math.pow(1 - p, 3);
+      scale = from + (target - from) * e;
+      paint();
+      if (p < 1) raf = requestAnimationFrame(tick);
+    }
+    raf = requestAnimationFrame(tick);
+  }
+
+  handle.addEventListener('pointerdown', function(e) {
+    dragging = true; startX = e.clientX; startScale = scale;
+    handle.classList.add('active');
+    frame.classList.add('zoomed');
+    readout.classList.add('visible');
+    cancelAnimationFrame(raf);
+    try { handle.setPointerCapture(e.pointerId); } catch(_) {}
+    e.preventDefault();
+  });
+
+  handle.addEventListener('pointermove', function(e) {
+    if (!dragging) return;
+    var dx = e.clientX - startX;
+    setScale(startScale + dx * 0.0045);
+  });
+
+  function release(e) {
+    if (!dragging) return;
+    dragging = false;
+    handle.classList.remove('active');
+    frame.classList.remove('zoomed');
+    try { handle.releasePointerCapture(e.pointerId); } catch(_) {}
+    springTo(1);
+    setTimeout(function(){ readout.classList.remove('visible'); }, 400);
+  }
+  handle.addEventListener('pointerup',     release);
+  handle.addEventListener('pointercancel', release);
+  handle.addEventListener('lostpointercapture', release);
+
+  // Keyboard accessibility — arrow keys nudge zoom
+  handle.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight') { setScale(scale + 0.05); readout.classList.add('visible'); }
+    else if (e.key === 'ArrowLeft')  { setScale(scale - 0.05); readout.classList.add('visible'); }
+    else return;
+    e.preventDefault();
+    clearTimeout(handle._kt);
+    handle._kt = setTimeout(function(){
+      springTo(1);
+      setTimeout(function(){ readout.classList.remove('visible'); }, 400);
+    }, 900);
+  });
+
+  paint();
+})();
+</script>
+</body>
+</html>"""
+    components.html(html.replace("__IMG_SRC__", src), height=780, scrolling=False)
+
+
 # ─── Sidebar replaced by top navbar — static defaults ────────────────────────
 show_red    = True
 show_yellow = True
@@ -1796,50 +2277,26 @@ render_navbar()
 
 render_hero()
 
-# ── Upload row ────────────────────────────────────────────────────────────────
-col_upload, col_sample = st.columns([5, 1.5])
-
-with col_upload:
-    uploaded_file = st.file_uploader(
-        "Upload BOM",
-        type=["csv", "xlsx"],
-        label_visibility="collapsed",
-        help="Upload a CSV or Excel BOM file — analysis starts automatically",
-    )
-
-with col_sample:
-    sample_clicked = st.button("Try Sample BOM", use_container_width=True)
+# ── Action buttons (ripple-styled — Upload / Try Sample / Contact) ───────────
+render_action_buttons()
 
 # ── Session state ─────────────────────────────────────────────────────────────
 if "results" not in st.session_state:
     st.session_state.results = None
-if "last_upload_name" not in st.session_state:
-    st.session_state.last_upload_name = None
 
-# ── Navbar/logo "Home" click → clears results via URL query param ────────────
-# Click on Catena logo or Dashboard link sets ?view=home → we reset state here.
-if st.query_params.get("view") == "home":
+# ── Query-param routing ───────────────────────────────────────────────────────
+# Navbar logo + Dashboard link set ?view=home → clear results.
+# "Try Sample BOM" ripple button sets ?action=sample → load demo BOM.
+view   = st.query_params.get("view")
+action = st.query_params.get("action")
+
+if view == "home":
     st.session_state.results = None
-    st.session_state.last_upload_name = None
     st.query_params.clear()
 
-# ── Trigger logic ─────────────────────────────────────────────────────────────
-if sample_clicked:
+if action == "sample":
     st.session_state.results = SAMPLE_RESULTS
-
-# Auto-run analysis when a new file is uploaded (no extra button click needed).
-if uploaded_file is not None and uploaded_file.name != st.session_state.last_upload_name:
-    st.session_state.last_upload_name = uploaded_file.name
-    if BACKEND_AVAILABLE:
-        with st.spinner("Analyzing BOM…"):
-            try:
-                st.session_state.results = analyze_bom(uploaded_file)
-            except Exception as exc:
-                st.error(f"Analysis failed: {exc}")
-                st.session_state.results = SAMPLE_RESULTS
-    else:
-        st.info("Backend not connected — showing sample analysis.")
-        st.session_state.results = SAMPLE_RESULTS
+    st.query_params.clear()
 
 # ── Results ──────────────────────────────────────────────────────────────────
 if st.session_state.results:
@@ -1899,6 +2356,7 @@ if st.session_state.results:
         )
 
 else:
-    # Landing state — feature showcase + testimonials
+    # Landing state — feature showcase + testimonials + magnifier hero
     render_feature_section()
     render_testimonials()
+    render_magnifier()
