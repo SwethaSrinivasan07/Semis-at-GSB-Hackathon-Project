@@ -1,171 +1,371 @@
-import io
+"""
+Report generation — PDF and annotated Excel.
 
-import pandas as pd
+Consumes the analyzed-BOM dict produced by demo_mode.analyze_bom() (and
+eventually by the FastAPI /analyze endpoint). Output design choices:
+
+PDF:
+- Cover/executive summary on page 1 (counts, top 3 risks, #1 recommendation)
+- Per-line risk table with a thick colored *left border* per row (more
+  scannable than cell-fill alone)
+- A "Flagged Parts — Substitutes" section listing up to 2 alternates per
+  RED/YELLOW line
+- Page numbers and generation date in the footer
+
+Excel:
+- Tab 1 "Risk Summary" — narrative + counts + top risks + recommendation
+- Tab 2 "Annotated BOM" — every line, row fill colored by risk level,
+  AutoFilter with a Critical Parts preset (RED only), datasheet hyperlink
+- Tab 3 "Substitutes" — every substitute recommendation, grouped by the
+  flagged part it covers
+"""
+
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+from openpyxl import Workbook
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.filters import FilterColumn, Filters
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import landscape, letter
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.pagesizes import LETTER
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from reportlab.pdfgen import canvas
+from reportlab.platypus import (
+    BaseDocTemplate,
+    Frame,
+    PageTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle,
+)
 
-RED = "#FF4444"
-YELLOW = "#FFB800"
-GREEN = "#00C851"
-DARK = "#1a1a2e"
+RISK_FILL = {
+    "RED": PatternFill("solid", fgColor="FFC9C9"),
+    "YELLOW": PatternFill("solid", fgColor="FFF1B8"),
+    "GREEN": PatternFill("solid", fgColor="D6F5D6"),
+}
 
-RISK_COLS = ["Overall Risk", "Availability", "Lead Time", "Cost", "Lifecycle", "Geo Risk"]
-FLAG_KEYS = ["composite", "availability", "lead_time", "cost", "lifecycle", "geopolitical"]
-
-
-def _risk_color(val: str):
-    return {"RED": RED, "YELLOW": YELLOW, "GREEN": GREEN}.get(val)
-
-
-def generate_annotated_bom(parts: list[dict]) -> bytes:
-    rows = []
-    for p in parts:
-        dist = p.get("distributor_data", {})
-        risk = p.get("risk", {})
-        flags = risk.get("flags", {})
-        rows.append({
-            "MPN": p.get("mpn", ""),
-            "Manufacturer": p.get("manufacturer", ""),
-            "Qty": p.get("quantity", ""),
-            "Ref Des": p.get("reference_designators", ""),
-            "Description": dist.get("description", p.get("description", "")),
-            "Provider": dist.get("provider", ""),
-            "Unit Price ($)": dist.get("unit_price", ""),
-            "Stock": dist.get("stock", ""),
-            "Lead Time (wks)": dist.get("lead_time_weeks", ""),
-            "Lifecycle": dist.get("lifecycle_status", ""),
-            "Fab Location": dist.get("fab_location", ""),
-            "Datasheet": dist.get("datasheet_url", ""),
-            "Overall Risk": risk.get("composite", ""),
-            "Availability": flags.get("availability", ""),
-            "Lead Time": flags.get("lead_time", ""),
-            "Cost": flags.get("cost", ""),
-            "Lifecycle": flags.get("lifecycle", ""),
-            "Geo Risk": flags.get("geopolitical", ""),
-        })
-
-    df = pd.DataFrame(rows)
-    out = io.BytesIO()
-
-    with pd.ExcelWriter(out, engine="xlsxwriter") as writer:
-        df.to_excel(writer, sheet_name="BOM Analysis", index=False)
-        wb = writer.book
-        ws = writer.sheets["BOM Analysis"]
-
-        red_fmt = wb.add_format({"bg_color": RED, "font_color": "white", "bold": True, "align": "center"})
-        yel_fmt = wb.add_format({"bg_color": YELLOW, "font_color": "white", "bold": True, "align": "center"})
-        grn_fmt = wb.add_format({"bg_color": GREEN, "font_color": "white", "bold": True, "align": "center"})
-        fmt_map = {"RED": red_fmt, "YELLOW": yel_fmt, "GREEN": grn_fmt}
-
-        for col_name in RISK_COLS:
-            if col_name not in df.columns:
-                continue
-            col_idx = df.columns.get_loc(col_name)
-            for row_idx, val in enumerate(df[col_name], start=1):
-                fmt = fmt_map.get(val)
-                if fmt:
-                    ws.write(row_idx, col_idx, val, fmt)
-
-        for i, col in enumerate(df.columns):
-            ws.set_column(i, i, max(16, len(str(col)) + 4))
-
-    out.seek(0)
-    return out.read()
+RISK_BORDER = {
+    "RED": colors.HexColor("#C0392B"),
+    "YELLOW": colors.HexColor("#D4AC0D"),
+    "GREEN": colors.HexColor("#1E8449"),
+}
 
 
-def generate_pdf_report(parts: list[dict], summary: dict) -> bytes:
-    out = io.BytesIO()
-    doc = SimpleDocTemplate(
-        out,
-        pagesize=landscape(letter),
-        rightMargin=0.5 * inch,
-        leftMargin=0.5 * inch,
-        topMargin=0.5 * inch,
-        bottomMargin=0.5 * inch,
-    )
-    styles = getSampleStyleSheet()
-    h1 = ParagraphStyle("h1", parent=styles["Heading1"], fontSize=20, spaceAfter=4)
-    sub = ParagraphStyle("sub", parent=styles["Normal"], fontSize=10, textColor=colors.HexColor("#666666"), spaceAfter=12)
-    body = styles["Normal"]
-    body.fontSize = 8
+# ====================================================================
+# Excel
+# ====================================================================
 
-    elems = []
-    elems.append(Paragraph("ChainSight — Supply Chain Risk Report", h1))
-    elems.append(Paragraph(
-        f"Total: {summary['total']}  |  🔴 High Risk: {summary['RED']}  |  🟡 Medium: {summary['YELLOW']}  |  🟢 Low: {summary['GREEN']}",
-        sub,
-    ))
+def write_excel(analysis: dict[str, Any], path: str | Path) -> Path:
+    path = Path(path)
+    wb = Workbook()
 
-    headers = ["MPN", "Mfr", "Qty", "Description", "Provider", "Price", "Stock", "Lead\nTime", "Lifecycle", "Risk"]
-    table_data = [headers]
+    _write_risk_summary_tab(wb, analysis)
+    _write_annotated_bom_tab(wb, analysis)
+    _write_substitutes_tab(wb, analysis)
 
-    for p in parts:
-        dist = p.get("distributor_data", {})
-        risk = p.get("risk", {})
-        desc = (dist.get("description") or p.get("description") or "")[:45]
-        table_data.append([
-            p.get("mpn", ""),
-            (p.get("manufacturer") or "")[:14],
-            str(p.get("quantity", "")),
-            desc,
-            dist.get("provider", ""),
-            f"${dist.get('unit_price', 0):.2f}",
-            f"{dist.get('stock', 0):,}",
-            f"{dist.get('lead_time_weeks', '?')}w",
-            dist.get("lifecycle_status", ""),
-            risk.get("composite", ""),
+    # Remove the default sheet created by Workbook() if it's still empty.
+    if "Sheet" in wb.sheetnames and wb["Sheet"].max_row <= 1 and wb["Sheet"].max_column <= 1:
+        del wb["Sheet"]
+
+    wb.save(path)
+    return path
+
+
+def _write_risk_summary_tab(wb: Workbook, analysis: dict[str, Any]) -> None:
+    ws = wb.create_sheet("Risk Summary", 0)
+    s = analysis["summary"]
+
+    ws["A1"] = "SupplyLine — Risk Summary"
+    ws["A1"].font = Font(bold=True, size=18)
+    ws.merge_cells("A1:E1")
+
+    ws["A2"] = f"BOM: {analysis.get('bom_name', '(unnamed)')}"
+    ws["A3"] = f"Generated: {analysis.get('generated_at', '')}"
+
+    ws["A5"] = "Total lines"
+    ws["B5"] = s["total_lines"]
+    ws["A6"] = "RED"
+    ws["B6"] = s["red_count"]
+    ws["B6"].fill = RISK_FILL["RED"]
+    ws["A7"] = "YELLOW"
+    ws["B7"] = s["yellow_count"]
+    ws["B7"].fill = RISK_FILL["YELLOW"]
+    ws["A8"] = "GREEN"
+    ws["B8"] = s["green_count"]
+    ws["B8"].fill = RISK_FILL["GREEN"]
+
+    ws["A10"] = "Top risks"
+    ws["A10"].font = Font(bold=True)
+    for i, risk in enumerate(s.get("top_risks") or [], start=11):
+        ws.cell(row=i, column=1, value=f"• {risk}")
+        ws.merge_cells(start_row=i, start_column=1, end_row=i, end_column=5)
+
+    row = 11 + max(len(s.get("top_risks") or []), 1) + 1
+    ws.cell(row=row, column=1, value="Recommendation").font = Font(bold=True)
+    ws.cell(row=row + 1, column=1, value=s.get("recommendation", ""))
+    ws.merge_cells(start_row=row + 1, start_column=1, end_row=row + 1, end_column=5)
+    ws.cell(row=row + 1, column=1).alignment = Alignment(wrap_text=True, vertical="top")
+
+    row += 4
+    ws.cell(row=row, column=1, value="Narrative").font = Font(bold=True)
+    ws.cell(row=row + 1, column=1, value=analysis.get("narrative", ""))
+    ws.merge_cells(start_row=row + 1, start_column=1, end_row=row + 1, end_column=5)
+    ws.cell(row=row + 1, column=1).alignment = Alignment(wrap_text=True, vertical="top")
+    ws.row_dimensions[row + 1].height = 80
+
+    for col in range(1, 6):
+        ws.column_dimensions[get_column_letter(col)].width = 28
+
+
+def _write_annotated_bom_tab(wb: Workbook, analysis: dict[str, Any]) -> None:
+    ws = wb.create_sheet("Annotated BOM")
+
+    headers = [
+        "Ref", "Qty", "MPN", "Manufacturer", "Category", "Lifecycle",
+        "Lead (wks)", "Stock", "Fab country", "Supplier count",
+        "Risk score", "Risk level", "Risk factors", "Datasheet",
+    ]
+    ws.append(headers)
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+        cell.fill = PatternFill("solid", fgColor="EEEEEE")
+        cell.border = Border(bottom=Side(style="thin", color="888888"))
+
+    for line in analysis["lines"]:
+        part = line.get("part") or {}
+        ws.append([
+            line.get("ref_designator"),
+            line.get("qty"),
+            line.get("mpn"),
+            part.get("manufacturer"),
+            part.get("category"),
+            part.get("lifecycle"),
+            part.get("lead_time_weeks"),
+            part.get("stock"),
+            part.get("fab_country"),
+            part.get("supplier_count"),
+            line.get("risk_score"),
+            line.get("risk_level"),
+            "; ".join(line.get("risk_factors") or []),
+            part.get("datasheet_url"),
         ])
+        last_row = ws.max_row
+        fill = RISK_FILL.get(line.get("risk_level", "GREEN"))
+        if fill:
+            for col_idx in range(1, len(headers) + 1):
+                ws.cell(row=last_row, column=col_idx).fill = fill
+        ds = part.get("datasheet_url")
+        if ds:
+            cell = ws.cell(row=last_row, column=len(headers))
+            cell.hyperlink = ds
+            cell.value = ds
+            cell.font = Font(color="0563C1", underline="single")
 
-    tbl = Table(table_data, repeatRows=1, hAlign="LEFT")
-    style = TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor(DARK)),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-        ("FONTSIZE", (0, 0), (-1, -1), 7),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ("ALIGN", (3, 1), (3, -1), "LEFT"),
-        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f5f5f5")]),
-        ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#cccccc")),
-        ("PADDING", (0, 0), (-1, -1), 4),
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+    widths = [6, 6, 30, 18, 14, 12, 11, 10, 14, 14, 11, 12, 50, 40]
+    for i, w in enumerate(widths, start=1):
+        ws.column_dimensions[get_column_letter(i)].width = w
+
+    last_col = get_column_letter(len(headers))
+    ref = f"A1:{last_col}{ws.max_row}"
+    ws.auto_filter.ref = ref
+    # "Critical Parts" preset: filter the Risk level column down to RED.
+    risk_level_col_index = headers.index("Risk level")
+    filter_col = FilterColumn(colId=risk_level_col_index)
+    filter_col.filters = Filters(filter=["RED"])
+    ws.auto_filter.filterColumn.append(filter_col)
+
+    ws.freeze_panes = "A2"
+
+
+def _write_substitutes_tab(wb: Workbook, analysis: dict[str, Any]) -> None:
+    ws = wb.create_sheet("Substitutes")
+    ws.append([
+        "Flagged MPN", "Flagged manufacturer", "Risk level",
+        "Substitute MPN", "Substitute manufacturer", "Sub lead (wks)",
+        "Sub stock", "Sub fab country", "Sub price USD",
     ])
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+        cell.fill = PatternFill("solid", fgColor="EEEEEE")
 
-    risk_col = len(headers) - 1
-    for row_idx, p in enumerate(parts, 1):
-        c = p.get("risk", {}).get("composite", "")
-        color = _risk_color(c)
-        if color:
-            style.add("BACKGROUND", (risk_col, row_idx), (risk_col, row_idx), colors.HexColor(color))
-            style.add("TEXTCOLOR", (risk_col, row_idx), (risk_col, row_idx), colors.white)
-            style.add("FONTNAME", (risk_col, row_idx), (risk_col, row_idx), "Helvetica-Bold")
+    for line in analysis["lines"]:
+        subs = line.get("substitutes") or []
+        if not subs or line.get("risk_level") == "GREEN":
+            continue
+        part = line.get("part") or {}
+        for sub in subs:
+            ws.append([
+                line.get("mpn"),
+                part.get("manufacturer"),
+                line.get("risk_level"),
+                sub.get("mpn"),
+                sub.get("manufacturer"),
+                sub.get("lead_time_weeks"),
+                sub.get("stock"),
+                sub.get("fab_country"),
+                sub.get("price_usd"),
+            ])
+            fill = RISK_FILL.get(line.get("risk_level"))
+            if fill:
+                ws.cell(row=ws.max_row, column=3).fill = fill
 
-    tbl.setStyle(style)
-    elems.append(tbl)
+    widths = [26, 18, 12, 26, 18, 12, 10, 14, 12]
+    for i, w in enumerate(widths, start=1):
+        ws.column_dimensions[get_column_letter(i)].width = w
+    ws.freeze_panes = "A2"
 
-    flagged = [p for p in parts if p.get("risk", {}).get("composite") in ("RED", "YELLOW")]
+
+# ====================================================================
+# PDF
+# ====================================================================
+
+class _FooterCanvas(canvas.Canvas):
+    """Adds 'Page N of M  |  generated <date>  |  SupplyLine' to every page."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._saved_pages: list[dict] = []
+
+    def showPage(self):
+        self._saved_pages.append(dict(self.__dict__))
+        self._startPage()
+
+    def save(self):
+        total = len(self._saved_pages)
+        stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        for state in self._saved_pages:
+            self.__dict__.update(state)
+            self._draw_footer(total, stamp)
+            super().showPage()
+        super().save()
+
+    def _draw_footer(self, total: int, stamp: str) -> None:
+        self.setFont("Helvetica", 8)
+        self.setFillColor(colors.HexColor("#666666"))
+        self.drawString(0.5 * inch, 0.4 * inch, f"SupplyLine  |  Generated {stamp}")
+        self.drawRightString(
+            LETTER[0] - 0.5 * inch, 0.4 * inch,
+            f"Page {self._pageNumber} of {total}",
+        )
+
+
+def write_pdf(analysis: dict[str, Any], path: str | Path) -> Path:
+    path = Path(path)
+    doc = BaseDocTemplate(
+        str(path),
+        pagesize=LETTER,
+        leftMargin=0.5 * inch,
+        rightMargin=0.5 * inch,
+        topMargin=0.5 * inch,
+        bottomMargin=0.7 * inch,
+        title="SupplyLine BOM Risk Report",
+    )
+    frame = Frame(
+        doc.leftMargin, doc.bottomMargin,
+        doc.width, doc.height,
+        id="body",
+    )
+    doc.addPageTemplates([PageTemplate(id="main", frames=[frame])])
+
+    styles = getSampleStyleSheet()
+    h1 = ParagraphStyle("h1", parent=styles["Heading1"], fontSize=18, spaceAfter=6)
+    h2 = ParagraphStyle("h2", parent=styles["Heading2"], fontSize=13, spaceBefore=10, spaceAfter=4)
+    body = ParagraphStyle("body", parent=styles["BodyText"], fontSize=10, leading=13)
+    body_small = ParagraphStyle("body_small", parent=body, fontSize=9, leading=11)
+
+    story: list[Any] = []
+
+    # ----- Header -----
+    story.append(Paragraph("SupplyLine — BOM Risk Report", h1))
+    story.append(Paragraph(
+        f"<b>BOM:</b> {analysis.get('bom_name', '(unnamed)')} &nbsp;&nbsp; "
+        f"<b>Generated:</b> {analysis.get('generated_at', '')}",
+        body,
+    ))
+    story.append(Spacer(1, 10))
+
+    # ----- Executive summary -----
+    s = analysis["summary"]
+    story.append(Paragraph("Executive summary", h2))
+    bullets = [
+        f"<b>{s['red_count']}</b> RED, <b>{s['yellow_count']}</b> YELLOW, "
+        f"<b>{s['green_count']}</b> GREEN out of {s['total_lines']} lines analyzed.",
+    ]
+    if s.get("top_risks"):
+        bullets.append("Top risks: " + "; ".join(s["top_risks"]))
+    if s.get("recommendation"):
+        bullets.append("Recommendation: " + s["recommendation"])
+    for b in bullets:
+        story.append(Paragraph("• " + b, body))
+    story.append(Spacer(1, 8))
+
+    if analysis.get("narrative"):
+        story.append(Paragraph("Narrative", h2))
+        story.append(Paragraph(analysis["narrative"], body))
+        story.append(Spacer(1, 10))
+
+    # ----- Per-line risk table with colored left borders -----
+    story.append(Paragraph("Line-by-line risk", h2))
+    header = ["Ref", "MPN", "Mfr", "Cat", "LT (wk)", "Stock", "Lifecycle", "Score", "Level"]
+    rows: list[list[str]] = [header]
+    for line in analysis["lines"]:
+        part = line.get("part") or {}
+        rows.append([
+            str(line.get("ref_designator", "")),
+            str(line.get("mpn", "")),
+            str(part.get("manufacturer", "")),
+            str(part.get("category", "")),
+            str(part.get("lead_time_weeks", "")),
+            str(part.get("stock", "")),
+            str(part.get("lifecycle", "")),
+            str(line.get("risk_score", "")),
+            str(line.get("risk_level", "")),
+        ])
+    col_widths = [0.45 * inch, 1.8 * inch, 1.1 * inch, 0.9 * inch,
+                  0.55 * inch, 0.55 * inch, 0.7 * inch, 0.5 * inch, 0.55 * inch]
+    table = Table(rows, colWidths=col_widths, repeatRows=1)
+    style_cmds = [
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#EEEEEE")),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 8),
+        ("ALIGN", (4, 1), (-1, -1), "RIGHT"),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("BOTTOMPADDING", (0, 0), (-1, 0), 6),
+        ("GRID", (0, 0), (-1, -1), 0.25, colors.HexColor("#CCCCCC")),
+    ]
+    # Thick colored left border per data row
+    for i, line in enumerate(analysis["lines"], start=1):
+        color = RISK_BORDER.get(line.get("risk_level"), colors.grey)
+        style_cmds.append(("LINEBEFORE", (0, i), (0, i), 4, color))
+    table.setStyle(TableStyle(style_cmds))
+    story.append(table)
+    story.append(Spacer(1, 12))
+
+    # ----- Substitutes section -----
+    flagged = [l for l in analysis["lines"] if l.get("risk_level") in ("RED", "YELLOW") and l.get("substitutes")]
     if flagged:
-        elems.append(Spacer(1, 0.25 * inch))
-        elems.append(Paragraph("Flagged Parts — Substitution Recommendations", styles["Heading2"]))
-        for p in flagged:
-            elems.append(Spacer(1, 0.08 * inch))
-            c = p.get("risk", {}).get("composite", "")
-            color = RED if c == "RED" else YELLOW
-            elems.append(Paragraph(
-                f'<font color="{color}"><b>● {p.get("mpn")} [{c}]</b></font> — {p.get("distributor_data", {}).get("description", "")[:60]}',
-                styles["Normal"],
+        story.append(Paragraph("Recommended substitutes (top 2 per flagged part)", h2))
+        for line in flagged:
+            part = line.get("part") or {}
+            story.append(Paragraph(
+                f"<b>{line.get('mpn')}</b> ({part.get('manufacturer', '?')}) — {line.get('risk_level')}",
+                body,
             ))
-            for sub in p.get("substitutes", [])[:3]:
-                grade = sub.get("compatibility_grade", "")
-                g_color = GREEN if grade == "Drop-in" else (YELLOW if grade == "Minor rework" else RED)
-                elems.append(Paragraph(
-                    f'&nbsp;&nbsp;→ <b>{sub.get("mpn")}</b> ({sub.get("manufacturer")}) '
-                    f'<font color="{g_color}">[{grade}]</font>: {sub.get("why_better", "")}',
-                    styles["Normal"],
+            for sub in (line.get("substitutes") or [])[:2]:
+                story.append(Paragraph(
+                    f"&nbsp;&nbsp;&nbsp;→ {sub.get('mpn')} ({sub.get('manufacturer')}) — "
+                    f"{sub.get('lead_time_weeks')} wk lead, stock {sub.get('stock')}, "
+                    f"fab {sub.get('fab_country')}, ${sub.get('price_usd')}",
+                    body_small,
                 ))
+            story.append(Spacer(1, 4))
 
-    doc.build(elems)
-    out.seek(0)
-    return out.read()
+    doc.build(story, canvasmaker=_FooterCanvas)
+    return path

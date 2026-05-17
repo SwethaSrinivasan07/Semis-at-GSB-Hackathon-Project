@@ -1,14 +1,115 @@
 {
-  "China": {"risk_level": "HIGH", "reason": "Export controls, geopolitical tension, trade war exposure"},
-  "Taiwan": {"risk_level": "HIGH", "reason": "TSMC concentration risk, geopolitical tension with China"},
-  "South Korea": {"risk_level": "MEDIUM", "reason": "Samsung/SK Hynix concentration, North Korea proximity"},
-  "Japan": {"risk_level": "LOW", "reason": "Stable democracy, allied nation, diversified fabs"},
-  "USA": {"risk_level": "LOW", "reason": "Domestic production, CHIPS Act investment"},
-  "Germany": {"risk_level": "LOW", "reason": "EU member, Infineon/Bosch manufacturing"},
-  "France": {"risk_level": "LOW", "reason": "EU member, STMicroelectronics HQ and fabs"},
-  "Ireland": {"risk_level": "LOW", "reason": "EU member, Intel fab operations"},
-  "Netherlands": {"risk_level": "LOW", "reason": "ASML monopoly on EUV, stable EU member"},
-  "Malaysia": {"risk_level": "MEDIUM", "reason": "Semiconductor assembly/packaging hub, political risk"},
-  "Israel": {"risk_level": "MEDIUM", "reason": "Intel/Tower Semiconductor presence, regional conflict risk"},
-  "Unknown": {"risk_level": "MEDIUM", "reason": "Origin not identified"}
+  "_schema_version": "1.0",
+  "_description": "Geo risk map for SupplyLine. Each country gets a 1-10 risk score (10 = highest supply chain risk for photonics OEM programs) plus a photonics-specific concentration_note explaining why that risk exists in this industry.",
+  "_last_updated": "2026-05-17",
+  "_scoring_guide": {
+    "1-3": "Low risk. Politically stable, multi-supplier ecosystem, low concentration.",
+    "4-6": "Moderate risk. Either single-country concentration, capacity constraints, or trade-policy friction.",
+    "7-8": "High risk. Geopolitical exposure, single-fab dependencies, or active export controls.",
+    "9-10": "Critical risk. Imminent disruption scenarios or near-monopoly concentration."
+  },
+  "countries": {
+    "USA": {
+      "geo_risk_score": 3,
+      "concentration_note": "Generally low political risk, but USA-based InP wafer fab capacity is a global bottleneck — only a handful of facilities (Coherent, Lumentum, IQE) serve the entire photonics industry. Single-facility outages cascade.",
+      "key_capabilities": ["InP photonics", "RF/analog ICs", "memory (Micron)", "MCUs"],
+      "primary_risks": ["InP fab capacity", "export control administration"]
+    },
+    "Taiwan": {
+      "geo_risk_score": 9,
+      "concentration_note": "TSMC fabs ~60% of global leading-edge logic. Nearly every photonics ASIC and coherent DSP in this BOM (Broadcom BCM88690, Marvell Alaska, Acacia DSP, AMD/Xilinx FPGAs) traces back to TSMC. Taiwan-strait disruption is the binary scenario; day-to-day risk is allocation tightness during hyperscaler surges.",
+      "key_capabilities": ["leading-edge logic", "ASIC fab", "advanced packaging"],
+      "primary_risks": ["geopolitical (PRC tensions)", "TSMC allocation", "earthquake exposure"]
+    },
+    "China": {
+      "geo_risk_score": 8,
+      "concentration_note": "Major source of cost-competitive transceivers (InnoLight, Accelink, HiSense). US export controls, tariffs (Section 301), and end-customer flow-down restrictions (DoD, Tier-1 carriers) often disqualify Chinese-fab parts from defense and federal programs.",
+      "key_capabilities": ["pluggable transceivers", "low-cost passives", "PCB fab"],
+      "primary_risks": ["US tariffs and export controls", "customer flow-down conflicts", "IP enforcement"]
+    },
+    "Japan": {
+      "geo_risk_score": 3,
+      "concentration_note": "Stable, multi-supplier ecosystem. Murata and TDK dominate MLCC supply globally — a single Japan earthquake event historically tightens passive availability worldwide for ~2 quarters.",
+      "key_capabilities": ["MLCCs", "specialty materials", "image sensors"],
+      "primary_risks": ["earthquake exposure", "passive concentration"]
+    },
+    "South Korea": {
+      "geo_risk_score": 5,
+      "concentration_note": "Samsung and SK Hynix dominate DRAM/NAND supply. Geographic proximity to North Korea is a tail risk; trade friction with Japan periodically disrupts materials inputs.",
+      "key_capabilities": ["DRAM", "NAND flash", "OLED"],
+      "primary_risks": ["regional geopolitics", "memory market concentration"]
+    },
+    "Malaysia": {
+      "geo_risk_score": 4,
+      "concentration_note": "Critical packaging/test hub for back-end semiconductor work; ON Semi, Infineon, Silicon Labs route many parts through here. Pandemic-era shutdowns (2021) demonstrated how a single Malaysian state can throttle global supply.",
+      "key_capabilities": ["IC packaging", "test", "assembly"],
+      "primary_risks": ["back-end capacity concentration", "labor disruption"]
+    },
+    "Philippines": {
+      "geo_risk_score": 4,
+      "concentration_note": "Major packaging hub for Analog Devices, Nexperia, and several other catalog suppliers. Typhoon exposure and limited alternative back-end capacity create real disruption risk.",
+      "key_capabilities": ["IC packaging", "test"],
+      "primary_risks": ["typhoon exposure", "back-end concentration"]
+    },
+    "Thailand": {
+      "geo_risk_score": 4,
+      "concentration_note": "Significant transceiver and HDD assembly base. Lumentum and several optical-component vendors finish product here. 2011 floods are the historical worst-case reference.",
+      "key_capabilities": ["optical assembly", "HDD assembly", "back-end packaging"],
+      "primary_risks": ["flooding", "logistics chokepoints"]
+    },
+    "Germany": {
+      "geo_risk_score": 3,
+      "concentration_note": "Infineon and Bosch base. Generally stable, but energy-cost shocks and automotive demand spikes can tighten power semi allocations on shared lines.",
+      "key_capabilities": ["power semis", "automotive ICs"],
+      "primary_risks": ["energy costs", "automotive demand cycles"]
+    },
+    "France": {
+      "geo_risk_score": 3,
+      "concentration_note": "STMicroelectronics fab footprint. Stable, but ST allocation tightens reliably during automotive surges, which can squeeze general-purpose MCU availability in photonics BOMs.",
+      "key_capabilities": ["MCUs", "RF", "MEMS sensors"],
+      "primary_risks": ["ST capacity allocation"]
+    },
+    "Netherlands": {
+      "geo_risk_score": 2,
+      "concentration_note": "ASML is the existential single-source for EUV lithography; while OEMs don't buy directly, every TSMC/Samsung roadmap depends on ASML deliveries. Also Nexperia (discrete) fab.",
+      "key_capabilities": ["lithography (ASML)", "discrete semis (Nexperia)"],
+      "primary_risks": ["EUV bottleneck cascades down the stack"]
+    },
+    "Ireland": {
+      "geo_risk_score": 2,
+      "concentration_note": "Analog Devices and Intel both have wafer fabs here. Stable EU jurisdiction; small geographic footprint means single-site events are localized.",
+      "key_capabilities": ["analog/mixed-signal fab", "logic fab"],
+      "primary_risks": ["single-site concentration"]
+    },
+    "Morocco": {
+      "geo_risk_score": 3,
+      "concentration_note": "ST packaging hub. Generally stable; tariff and customs friction can extend lead times.",
+      "key_capabilities": ["IC packaging", "test"],
+      "primary_risks": ["logistics", "customs"]
+    },
+    "Singapore": {
+      "geo_risk_score": 3,
+      "concentration_note": "Major regional hub for distribution, wafer fab (GlobalFoundries Fab 7, Micron NAND), and back-end packaging. Politically stable, but a strategic chokepoint adjacent to South China Sea shipping lanes.",
+      "key_capabilities": ["NAND flash (Micron)", "GF fab", "regional distribution"],
+      "primary_risks": ["shipping-lane disruption", "regional spillover from Taiwan scenarios"]
+    },
+    "Finland": {
+      "geo_risk_score": 2,
+      "concentration_note": "Nokia HQ and engineering base; not a fab country but a critical decision-making and integration node for Nokia photonics programs. NATO membership (2023) reduces prior border-risk concerns.",
+      "key_capabilities": ["systems engineering (Nokia)", "integration"],
+      "primary_risks": ["historically Russia-border exposure, now NATO-protected"]
+    },
+    "Canada": {
+      "geo_risk_score": 2,
+      "concentration_note": "Ciena HQ region (Ottawa engineering) and several photonics startups; not a high-volume fab base. USMCA-protected trade with USA.",
+      "key_capabilities": ["photonics R&D", "systems engineering (Ciena)"],
+      "primary_risks": ["minimal — primarily R&D/engineering exposure"]
+    },
+    "Sweden": {
+      "geo_risk_score": 2,
+      "concentration_note": "Ericsson HQ; photonics design and systems engineering. Not a fab country. NATO membership (2024) reduces prior border-risk concerns.",
+      "key_capabilities": ["systems engineering (Ericsson)", "telecom IP"],
+      "primary_risks": ["minimal — engineering-only exposure"]
+    }
+  }
 }
