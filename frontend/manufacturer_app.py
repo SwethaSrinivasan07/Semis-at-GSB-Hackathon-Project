@@ -1566,6 +1566,7 @@ def render_action_buttons() -> None:
   // Click ripple — spawn a circle at the click point on every .rb click.
   document.querySelectorAll('.rb').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
+      // Spawn click ripple (visual feedback — unchanged).
       var rect = btn.getBoundingClientRect();
       var size = Math.max(rect.width, rect.height) * 2;
       var x = e.clientX - rect.left - size / 2;
@@ -1578,6 +1579,19 @@ def render_action_buttons() -> None:
       span.style.top  = y + 'px';
       btn.appendChild(span);
       setTimeout(function(){ span.remove(); }, 620);
+
+      // Navigate the parent page. Streamlit's components.html iframe
+      // sandbox blocks target="_top" on <a>, so we do it manually.
+      // allow-same-origin lets us access window.top.location.
+      var href = btn.getAttribute('href');
+      if (!href || href === '#') return;
+      if (href.indexOf('mailto:') === 0) return;  // mailto: works natively
+      e.preventDefault();
+      try { window.top.location.href = href; }
+      catch (err) {
+        try { window.parent.location.href = href; }
+        catch (err2) { window.location.href = href; }
+      }
     });
   });
 })();
